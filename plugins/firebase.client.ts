@@ -25,9 +25,10 @@ export default defineNuxtPlugin((nuxtApp) => {
     
     // Enable offline persistence with unlimited cache size
     // This helps when connection issues occur or ad-blockers interfere
-    enableIndexedDbPersistence(firestore, {
-      cacheSizeBytes: CACHE_SIZE_UNLIMITED
-    }).catch((err) => {
+    // The settings object is removed as cacheSizeBytes is not a valid property here.
+    // IndexedDB persistence uses unlimited cache by default.
+    enableIndexedDbPersistence(firestore)
+      .catch((err) => {
       if (err.code === 'failed-precondition') {
         // Multiple tabs open, persistence can only be enabled in one tab at a time
         console.warn('Firebase persistence could not be enabled: Multiple tabs open')

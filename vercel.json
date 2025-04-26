@@ -1,0 +1,9 @@
+{
+  "framework": "nuxt",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".output",
+  "regions": ["fra1"],
+  "github": {
+    "silent": true
+  }
+}
