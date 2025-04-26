@@ -3,7 +3,7 @@
     <header class="bg-white dark:bg-gray-800 shadow">
       <nav class="container mx-auto px-4 py-4 flex items-center justify-between">
         <NuxtLink to="/" class="text-xl font-bold text-blue-600 dark:text-blue-400">
-          Devamke
+          UniTrack
         </NuxtLink>
         
         <!-- Nav links for authenticated users -->
