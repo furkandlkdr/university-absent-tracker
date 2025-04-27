@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <div class="min-h-screen">
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
@@ -7,15 +7,32 @@
 </template>
 
 <script setup lang="ts">
-// Set up global authentication state
 const user = useState('user', () => null)
 const isLoggedIn = computed(() => !!user.value)
 
-// This will be used to handle auth state throughout the app
-</script>
+const colorMode = useColorMode()
 
-<style lang="postcss">
-body {
-  @apply antialiased text-gray-800 dark:text-gray-200;
-}
-</style>
+// Tema yönetimi değişkenleri
+const currentHue = useState('theme-hue', () => {
+  // Başlangıçta localStorage'dan değeri almaya çalış (varsayılan: 240)
+  return process.client ? parseInt(localStorage.getItem('theme-hue') || '240') : 240
+})
+
+// Tema fonksiyonlarını global olarak erişilebilir yap
+provide('themeHue', currentHue)
+provide('setThemeHue', (hue: number) => {
+  currentHue.value = hue
+  document.documentElement.style.setProperty('--hue', hue.toString())
+  if (process.client) {
+    localStorage.setItem('theme-hue', hue.toString())
+  }
+})
+
+// Renk modu değişikliği için fonksiyon
+provide('setColorMode', (mode: 'light' | 'dark' | 'system') => {
+  colorMode.preference = mode
+  if (process.client) {
+    localStorage.setItem('color-mode-preference', mode)
+  }
+})
+</script>
