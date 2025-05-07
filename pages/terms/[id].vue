@@ -108,7 +108,7 @@
               <div v-if="weekDropdownOpen"
                 class="absolute z-10 mt-1 py-1 bg-white dark:bg-gray-800 rounded-md shadow-lg max-h-60 overflow-y-auto w-full border border-gray-200 dark:border-gray-700"
                 ref="weekDropdownRef">
-                <button v-for="weekNum in 14" :key="weekNum" @click="selectWeek(weekNum)"
+                <button v-for="weekNum in totalWeeks" :key="weekNum" @click="selectWeek(weekNum)"
                   class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                   :class="weekNum === selectedWeek ? 'bg-primary-50 dark:bg-primary-900 text-primary-600 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300'">
                   {{ weekNum }}. Hafta - {{ formatWeekRange(weekNum) }}
@@ -116,9 +116,9 @@
               </div>
             </div>
 
-            <button @click="navigateWeek(1)" :disabled="selectedWeek >= 14" :class="[
+            <button @click="navigateWeek(1)" :disabled="selectedWeek >= totalWeeks" :class="[
               'p-2 rounded-md',
-              selectedWeek >= 14 ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+              selectedWeek >= totalWeeks ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
             ]">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
@@ -158,7 +158,7 @@
                           'text-sm px-3 py-1 rounded-md',
                           getAttendanceStatus(entry) === status ? getStatusButtonClass(status, true) : getStatusButtonClass(status, false),
                           term.isReadOnly ? 'cursor-not-allowed opacity-75' : 'cursor-pointer hover:opacity-90'
-                        ]" :disabled="term.isReadOnly" @click="!term.isReadOnly && updateAttendance(entry, status)">
+                        ]" :disabled="term.isReadOnly" @click="!term.isReadOnly && updateAttendance(entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')">
                           {{ status }}
                         </button>
                       </div>
@@ -301,7 +301,7 @@ onMounted(async () => {
 // Week navigation functions
 const navigateWeek = (direction: number) => {
   const newWeek = selectedWeek.value + direction
-  if (newWeek >= 1 && newWeek <= 14) {
+  if (newWeek >= 1 && newWeek <= totalWeeks.value) {
     selectedWeek.value = newWeek
     weekDropdownOpen.value = false
   }
@@ -401,11 +401,11 @@ const calculateCurrentWeek = () => {
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
   const weekNumber = Math.floor(diffDays / 7) + 1
 
-  // If current week is within the 14-week span
-  if (weekNumber > 0 && weekNumber <= 14) {
+  // If current week is within the total week span
+  if (weekNumber > 0 && weekNumber <= totalWeeks.value) {
     currentWeek.value = weekNumber
-  } else if (weekNumber > 14) {
-    currentWeek.value = 14 // Cap at 14 weeks
+  } else if (weekNumber > totalWeeks.value) {
+    currentWeek.value = totalWeeks.value // Cap at total weeks
   } else {
     currentWeek.value = null
   }
@@ -493,4 +493,12 @@ const openTermEditModal = () => {
     }
   })
 }
+
+// Total weeks in the term
+const totalWeeks = computed(() => {
+  if (term.value?.weekCount) {
+    return term.value.weekCount;
+  }
+  return term.value ? (groupedCalendar.value.length || 14) : 14;
+})
 </script>

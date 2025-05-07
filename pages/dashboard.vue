@@ -134,6 +134,39 @@
             </div>
 
             <div>
+              <label for="weekCount" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Dönem Uzunluğu (Hafta) <span class="text-red-500">*</span>
+              </label>
+              <div class="flex items-stretch">
+                <button type="button" @click="decrementWeekCount" 
+                  class="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-l-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white flex items-center justify-center"
+                  :disabled="termForm.weekCount <= 5">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                  </svg>
+                </button>
+                <div class="relative flex-1">
+                  <input id="weekCount" v-model.number="termForm.weekCount" type="number" min="5" max="18" required
+                    class="w-full px-3 py-2 border-y border-gray-300 dark:border-gray-700 text-center focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    @blur="validateWeekCount" />
+                  <div class="absolute inset-y-0 right-0 flex items-center px-3 text-xs text-gray-500 dark:text-gray-400">
+                    hafta
+                  </div>
+                </div>
+                <button type="button" @click="incrementWeekCount"
+                  class="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-r-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white flex items-center justify-center"
+                  :disabled="termForm.weekCount >= 18">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                </button>
+              </div>
+              <p class="mt-1 text-xs" :class="{ 'text-red-500 dark:text-red-400 font-medium animate-pulse': weekCountError, 'text-gray-500 dark:text-gray-400': !weekCountError }">
+                Dönem süresi 5 ile 18 hafta arasında olabilir (varsayılan: 14 hafta)
+              </p>
+            </div>
+
+            <div>
               <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Haftalık Ders Programı</h4>
 
               <div class="space-y-6">
@@ -257,6 +290,7 @@ const termForm = ref({
   id: '',
   name: '',
   startDate: '',
+  weekCount: 14, // Varsayılan olarak 14 hafta
   schedule: [
     { morning1: '', morning2: '', afternoon1: '', afternoon2: '' }, // Monday
     { morning1: '', morning2: '', afternoon1: '', afternoon2: '' }, // Tuesday
@@ -367,6 +401,7 @@ const resetTermForm = () => {
     id: '',
     name: '',
     startDate: '',
+    weekCount: 14, // Varsayılan olarak 14 hafta
     schedule: [
       { morning1: '', morning2: '', afternoon1: '', afternoon2: '' },
       { morning1: '', morning2: '', afternoon1: '', afternoon2: '' },
@@ -476,6 +511,7 @@ const saveTerm = async () => {
       result = await updateTerm(termForm.value.id, {
         name: termForm.value.name,
         startDate: termForm.value.startDate,
+        weekCount: termForm.value.weekCount,
         schedule
       })
     } else {
@@ -483,6 +519,7 @@ const saveTerm = async () => {
       result = await addTerm({
         name: termForm.value.name,
         startDate: termForm.value.startDate,
+        weekCount: termForm.value.weekCount,
         schedule
       })
     }
@@ -543,5 +580,25 @@ const deleteTerm = async () => {
 // Navigate to term detail page
 const viewTerm = (termId: string) => {
   router.push(`/terms/${termId}`)
+}
+
+// Increment week count
+const incrementWeekCount = () => {
+  if (termForm.value.weekCount < 18) {
+    termForm.value.weekCount++
+  }
+}
+
+// Decrement week count
+const decrementWeekCount = () => {
+  if (termForm.value.weekCount > 5) {
+    termForm.value.weekCount--
+  }
+}
+
+// Validate week count
+const weekCountError = ref(false)
+const validateWeekCount = () => {
+  weekCountError.value = termForm.value.weekCount < 5 || termForm.value.weekCount > 18
 }
 </script>
