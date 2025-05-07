@@ -49,6 +49,20 @@
           </p>
         </div>
       </div>
+      <!-- Warning Alert -->
+      <div
+        class="mt-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 dark:bg-yellow-900 dark:border-yellow-600 dark:text-yellow-200 rounded-md shadow">
+        <div class="flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <p class="font-medium">Önemli Uyarı: Lütfen JavaScript'i ve Ad blocker'ları kapatın!</p>
+        </div>
+        <p class="ml-8 text-sm mt-1">Bu uygulama düzgün çalışmak için JavaScript gerektirir ve Ad blocker'lar Firebase
+          bağlantısını engelleyebilir.</p>
+      </div>
     </div>
   </div>
 </template>

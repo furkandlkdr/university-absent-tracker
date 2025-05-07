@@ -4,28 +4,29 @@ A web application designed to help users easily track their class attendance thr
 
 ## Overview
 
-This application provides a simple interface for users to define their academic terms, set up their weekly class schedules, and mark their attendance for each class session over a 14-week period. It calculates and displays absence counts dynamically, highlighting courses nearing the absence limit.
+This application provides a simple interface for users to define their academic terms, set up their weekly class schedules, and mark their attendance for each class session over a customizable period (5-18 weeks). It calculates and displays absence counts dynamically, highlighting courses nearing the absence limit.
 
 ## Key Features
 
 * **User Authentication:** Secure sign-up and login using Firebase Authentication (Email/Password).
 * **Term Management:** Create new academic terms with custom names, start dates, and weekly schedules. View past and present terms. Edit active terms.
 * **Weekly Schedule Definition:** Define a weekly class schedule (Monday-Friday) with up to 2 morning and 2 afternoon slots per day. Each course slot occurs once per week.
-* **14-Week Calendar:** Automatically generates a 14-week view for each term based on the start date and defined schedule.
+* **Customizable Term Length:** Choose your term length from 5 to 18 weeks to match your academic calendar.
 * **Attendance Marking:** Mark attendance for past and current days within an active term using statuses: "Attended", "Absent", or "Holiday / No Class".
 * **Dynamic Absence Reporting:** Displays a list of courses for the selected term showing absences in the format `Course Name: X / Y`.
     * `X`: Total count of "Absent" marks for the course.
     * `Y`: Number of weeks passed for that specific course within the term, *excluding* weeks marked as "Holiday / No Class".
 * **Absence Warnings:** Courses with 3 or 4 absences (`X` value) are automatically highlighted in red.
-* **Read-Only Completed Terms:** Terms automatically become read-only 14 weeks after their start date, preserving historical data.
+* **Read-Only Completed Terms:** Terms automatically become read-only when all weeks have passed, preserving historical data.
 * **Mobile-First Design:** Responsive interface optimized for mobile devices.
+* **Theme Customization:** Choose your preferred color scheme (light, dark, or system) and customize the theme color with an interactive color picker.
 
 ## How It Works
 
 1.  **Sign Up / Log In:** Users create an account or log in using their email and password.
 2.  **Term Dashboard:** After login, users see a list of their created terms.
 3.  **Create/Select Term:** Users can add a new term (providing a name, start date, and weekly schedule) or select an existing active term to view.
-4.  **View & Mark Attendance:** Selecting an active term shows the 14-week schedule. Users can click on past or present class slots to mark their attendance status.
+4.  **View & Mark Attendance:** Selecting an active term shows the schedule. Users can click on past or present class slots to mark their attendance status.
 5.  **Track Absences:** The application maintains a running count of absences (`X`) and calculates the relevant number of weeks passed (`Y`) for each course in the selected term, displaying it as `X / Y`.
 6.  **Review Status:** Users can quickly see which courses are approaching the absence limit thanks to the red highlighting. Completed terms can be reviewed but not modified.
 
