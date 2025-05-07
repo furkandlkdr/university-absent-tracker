@@ -65,7 +65,7 @@
 
           <!-- Actions -->
           <div class="flex justify-end space-x-2 mt-2">
-            <button @click="viewTerm(term.id)"
+            <button @click="term.id && viewTerm(term.id)"
               class="text-blue-600 dark:text-blue-400 hover:underline text-sm flex items-center">
               <span class="mr-1">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -297,14 +297,17 @@ onMounted(async () => {
 
         // If not found in loaded terms, fetch it directly
         if (!termToEdit) {
-          termToEdit = await getTerm(termId)
+          const fetchedTerm = await getTerm(termId)
+          if (fetchedTerm) {
+            termToEdit = fetchedTerm
+          }
         }
 
         if (termToEdit) {
           editTerm(termToEdit)
 
           // Clear the query parameters without reloading the page
-          router.replace({ path: '/dashboard', query: {} }, { replace: true })
+          router.replace({ path: '/dashboard', query: {} })
         }
       }
 
@@ -408,7 +411,7 @@ const saveTerm = async () => {
     }
 
     // Convert the schedule from our form structure to the database structure
-    const schedule = []
+    const schedule: { name: string; dayOfWeek: number; timeSlot: "morning1" | "morning2" | "afternoon1" | "afternoon2" }[] = []
     for (let dayIndex = 0; dayIndex < 5; dayIndex++) {
       const day = termForm.value.schedule[dayIndex]
 
@@ -417,7 +420,7 @@ const saveTerm = async () => {
         schedule.push({
           name: day.morning1,
           dayOfWeek: dayIndex,
-          timeSlot: 'morning1'
+          timeSlot: 'morning1' as "morning1"
         })
       }
 
@@ -425,7 +428,7 @@ const saveTerm = async () => {
         schedule.push({
           name: day.morning2,
           dayOfWeek: dayIndex,
-          timeSlot: 'morning2'
+          timeSlot: 'morning2' as "morning2"
         })
       }
 
@@ -434,7 +437,7 @@ const saveTerm = async () => {
         schedule.push({
           name: day.afternoon1,
           dayOfWeek: dayIndex,
-          timeSlot: 'afternoon1'
+          timeSlot: 'afternoon1' as "afternoon1"
         })
       }
 
@@ -442,7 +445,7 @@ const saveTerm = async () => {
         schedule.push({
           name: day.afternoon2,
           dayOfWeek: dayIndex,
-          timeSlot: 'afternoon2'
+          timeSlot: 'afternoon2' as "afternoon2"
         })
       }
     }

@@ -52,6 +52,12 @@ export const useDatabase = () => {
   const db = $firebase?.firestore as Firestore
   const { user } = useAuth()
   
+  // Helper function to safely get user ID
+  const getUserId = (): string | null => {
+    if (!user.value) return null;
+    return user.value.uid;
+  }
+  
   // Check if Firestore is available
   if (!db) {
     console.error('Firestore is not initialized')
@@ -73,16 +79,17 @@ export const useDatabase = () => {
   
   // Get all terms for current user
   const getTerms = async (retryCount = 0, maxRetries = 3) => {
-    if (!user.value) {
+    const userId = getUserId();
+    if (!userId) {
       console.log('No user is logged in')
       return []
     }
     
     try {
-      console.log('Fetching terms for user ID:', user.value.uid)
+      console.log('Fetching terms for user ID:', userId)
       const q = query(
         termsRef,
-        where('userId', '==', user.value.uid),
+        where('userId', '==', userId),
         orderBy('startDate', 'desc')
       )
       
@@ -122,7 +129,8 @@ export const useDatabase = () => {
   
   // Add a new term
   const addTerm = async (term: Omit<Term, 'id' | 'userId' | 'isReadOnly'>) => {
-    if (!user.value) return { success: false, error: 'User not authenticated' }
+    const userId = getUserId();
+    if (!userId) return { success: false, error: 'User not authenticated' }
     
     try {
       const startDate = parseISO(term.startDate)
@@ -134,7 +142,7 @@ export const useDatabase = () => {
       
       const newTerm = {
         ...term,
-        userId: user.value.uid,
+        userId,
         isReadOnly,
       }
       
@@ -147,7 +155,8 @@ export const useDatabase = () => {
   
   // Update an existing term
   const updateTerm = async (termId: string, updates: Partial<Term>) => {
-    if (!user.value) return { success: false, error: 'User not authenticated' }
+    const userId = getUserId();
+    if (!userId) return { success: false, error: 'User not authenticated' }
     
     try {
       // Check if the term is read-only
@@ -178,12 +187,13 @@ export const useDatabase = () => {
   
   // Get attendance records for a specific term
   const getAttendanceRecords = async (termId: string, retryCount = 0, maxRetries = 3) => {
-    if (!user.value) return []
+    const userId = getUserId();
+    if (!userId) return []
     
     try {
       const q = query(
         recordsRef,
-        where('userId', '==', user.value.uid),
+        where('userId', '==', userId),
         where('termId', '==', termId),
         orderBy('date', 'asc')
       )
@@ -209,13 +219,14 @@ export const useDatabase = () => {
   
   // Add or update attendance record
   const updateAttendanceStatus = async (record: Omit<AttendanceRecord, 'id' | 'userId'>) => {
-    if (!user.value) return { success: false, error: 'User not authenticated' }
+    const userId = getUserId();
+    if (!userId) return { success: false, error: 'User not authenticated' }
     
     try {
       // Check if record exists
       const q = query(
         recordsRef,
-        where('userId', '==', user.value.uid),
+        where('userId', '==', userId),
         where('termId', '==', record.termId),
         where('courseName', '==', record.courseName),
         where('date', '==', record.date)
@@ -231,7 +242,7 @@ export const useDatabase = () => {
         // Add new record
         await addDoc(recordsRef, {
           ...record,
-          userId: user.value.uid
+          userId
         })
       }
       

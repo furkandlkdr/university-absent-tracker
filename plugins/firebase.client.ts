@@ -5,14 +5,19 @@ import { getFirestore, enableIndexedDbPersistence, connectFirestoreEmulator, CAC
 export default defineNuxtPlugin((nuxtApp) => {
   const runtimeConfig = useRuntimeConfig()
   
+  // Her değer için string türünü garantileyen helper fonksiyon
+  const getConfigValue = (value: string | undefined, fallback: string): string => {
+    return value || fallback;
+  }
+  
   const config = {
-    // Öncelikle runtime config'ten değerleri almayı dene
-    apiKey: runtimeConfig.public?.firebaseApiKey || import.meta.env.FIREBASE_API_KEY || '**FIREBASE_API_KEY**',
-    authDomain: runtimeConfig.public?.firebaseAuthDomain || import.meta.env.FIREBASE_AUTH_DOMAIN || '**FIREBASE_AUTH_DOMAIN**',
-    projectId: runtimeConfig.public?.firebaseProjectId || import.meta.env.FIREBASE_PROJECT_ID || '**FIREBASE_PROJECT_ID**',
-    storageBucket: runtimeConfig.public?.firebaseStorageBucket || import.meta.env.FIREBASE_STORAGE_BUCKET || '**FIREBASE_STORAGE_BUCKET**',
-    messagingSenderId: runtimeConfig.public?.firebaseMessagingSenderId || import.meta.env.FIREBASE_MESSAGING_SENDER_ID || '**FIREBASE_MESSAGING_SENDER_ID**',
-    appId: runtimeConfig.public?.firebaseAppId || import.meta.env.FIREBASE_APP_ID || '**FIREBASE_APP_ID**'
+    // String türü garantili yapılandırma değerleri
+    apiKey: getConfigValue(runtimeConfig.public?.firebaseApiKey || import.meta.env.FIREBASE_API_KEY, '**FIREBASE_API_KEY**'),
+    authDomain: getConfigValue(runtimeConfig.public?.firebaseAuthDomain || import.meta.env.FIREBASE_AUTH_DOMAIN, '**FIREBASE_AUTH_DOMAIN**'),
+    projectId: getConfigValue(runtimeConfig.public?.firebaseProjectId || import.meta.env.FIREBASE_PROJECT_ID, '**FIREBASE_PROJECT_ID**'),
+    storageBucket: getConfigValue(runtimeConfig.public?.firebaseStorageBucket || import.meta.env.FIREBASE_STORAGE_BUCKET, '**FIREBASE_STORAGE_BUCKET**'),
+    messagingSenderId: getConfigValue(runtimeConfig.public?.firebaseMessagingSenderId || import.meta.env.FIREBASE_MESSAGING_SENDER_ID, '**FIREBASE_MESSAGING_SENDER_ID**'),
+    appId: getConfigValue(runtimeConfig.public?.firebaseAppId || import.meta.env.FIREBASE_APP_ID, '**FIREBASE_APP_ID**')
   }
 
   // Firebase örneklerini oluşturma işlemini try-catch bloğu içine alalım
