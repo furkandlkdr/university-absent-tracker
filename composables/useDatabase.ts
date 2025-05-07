@@ -18,6 +18,7 @@ export interface Term {
   name: string;
   startDate: string; // ISO format date string
   isReadOnly: boolean;
+  weekCount: number; // Kullanıcının belirlediği toplam dönem uzunluğu (hafta)
   schedule: Course[];
 }
 
@@ -135,15 +136,17 @@ export const useDatabase = () => {
     try {
       const startDate = parseISO(term.startDate)
       const currentDate = new Date()
-      const endDate = addWeeks(startDate, 14)
+      const weekCount = term.weekCount || 14 // Varsayılan olarak 14 hafta, yoksa kullanıcının seçtiği değeri kullan
+      const endDate = addWeeks(startDate, weekCount)
       
-      // Check if term is read-only (14 weeks completed)
+      // Check if term is read-only (total weeks completed)
       const isReadOnly = isBefore(endDate, currentDate)
       
       const newTerm = {
         ...term,
         userId,
         isReadOnly,
+        weekCount: weekCount, // Haftayı ekleyelim
       }
       
       const docRef = await addDoc(termsRef, newTerm)
@@ -162,7 +165,8 @@ export const useDatabase = () => {
       // Check if the term is read-only
       const termData = await getTerm(termId)
       if (termData?.isReadOnly) {
-        return { success: false, error: 'Bu dönem düzenlenemez (14 hafta dolmuş)' }
+        const weekCount = termData.weekCount || 14;
+        return { success: false, error: `Bu dönem düzenlenemez (${weekCount} hafta dolmuş)` }
       }
       
       await updateDoc(doc(db, 'terms', termId), updates)
@@ -256,10 +260,11 @@ export const useDatabase = () => {
   const getTermStatistics = (term: Term, records: AttendanceRecord[]) => {
     const today = new Date()
     const startDate = parseISO(term.startDate)
+    const weekCount = term.weekCount || 14 // Varsayılan olarak 14 hafta
     
-    // Calculate current week number (max 14)
+    // Calculate current week number (max = weekCount)
     let currentWeek = differenceInWeeks(today, startDate) + 1
-    if (currentWeek > 14) currentWeek = 14
+    if (currentWeek > weekCount) currentWeek = weekCount
     if (currentWeek < 1) currentWeek = 1
     
     // Get unique course names from the schedule
@@ -275,7 +280,7 @@ export const useDatabase = () => {
       
       // Count available weeks (excluding holidays marked as "Tatil / Ders Yok")
       const holidays = courseRecords.filter(r => r.status === 'Tatil / Ders Yok').length
-      const availableWeeks = Math.min(currentWeek, 14) - holidays
+      const availableWeeks = Math.min(currentWeek, weekCount) - holidays
       
       // Calculate if course is at risk (3 or 4 absences)
       const isAtRisk = absences >= 3
@@ -291,13 +296,14 @@ export const useDatabase = () => {
     return statistics
   }
   
-  // Generate a 14-week calendar for a term based on its start date and schedule
+  // Generate a calendar for a term based on its start date, schedule, and week count
   const generateTermCalendar = (term: Term) => {
     const startDate = parseISO(term.startDate)
+    const weekCount = term.weekCount || 14 // Varsayılan olarak 14 hafta
     const calendar: { date: string; courseName: string; weekNumber: number; timeSlot: "morning1" | "morning2" | "afternoon1" | "afternoon2"; isPast: boolean; }[] = []
     
-    // Generate 14 weeks of classes
-    for (let week = 0; week < 14; week++) {
+    // Generate weeks of classes based on the term's weekCount
+    for (let week = 0; week < weekCount; week++) {
       // Hafta başlangıcını hesapla (haftanın ilk günü)
       const weekStartDate = addWeeks(startDate, week)
       
