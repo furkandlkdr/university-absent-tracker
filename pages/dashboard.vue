@@ -107,14 +107,21 @@
 
     <!-- New/Edit Term Modal -->
     <div v-if="showNewTermModal || showEditTermModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto"
       @click.self="cancelTermModal">
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full max-h-screen overflow-y-auto">
-        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full mx-4 mb-4 max-h-[85vh] overflow-y-auto relative">
+        <!-- Close button -->
+        <button @click="cancelTermModal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        
+        <div class="p-5 border-b border-gray-200 dark:border-gray-700">
           <h3 class="text-lg font-semibold">{{ showEditTermModal ? 'Dönemi Düzenle' : 'Yeni Dönem Ekle' }}</h3>
         </div>
 
-        <div class="p-4">
+        <div class="p-5">
           <form @submit.prevent="saveTerm" class="space-y-4">
             <div>
               <label for="termName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -238,14 +245,21 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+    <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto"
       @click.self="showDeleteModal = false">
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-md w-full">
-        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-md w-full mx-4 mb-4 relative">
+        <!-- Close button -->
+        <button @click="showDeleteModal = false" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        
+        <div class="p-5 border-b border-gray-200 dark:border-gray-700">
           <h3 class="text-lg font-semibold">Dönemi Sil</h3>
         </div>
 
-        <div class="p-4">
+        <div class="p-5">
           <p class="mb-4 text-gray-700 dark:text-gray-300">
             <strong>{{ termToDelete?.name }}</strong> dönemini silmek istediğinizden emin misiniz? Bu işlem geri
             alınamaz ve
@@ -422,6 +436,7 @@ const editTerm = (term: Term) => {
   termForm.value.id = term.id || ''
   termForm.value.name = term.name
   termForm.value.startDate = term.startDate
+  termForm.value.weekCount = term.weekCount || 14
 
   // Convert the schedule array from the database structure to our form structure
   term.schedule.forEach((course) => {
