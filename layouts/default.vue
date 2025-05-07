@@ -63,7 +63,7 @@
 
     <footer class="bg-surface-light dark:bg-surface-dark shadow-inner mt-auto">
       <div class="container mx-auto px-4 py-4 text-center text-gray-600 dark:text-gray-400 text-sm">
-      <p>Made with ❤️ by <a href="https://github.com/furkandlkdr" class="underline hover:text-primary-500 transition-colors">Nafair</a></p>
+      <p>Made with ❤️ by <a href="https://github.com/furkandlkdr" target="_blank" class="underline hover:text-primary-500 transition-colors">Nafair</a></p>
       <p>&copy; {{ new Date().getFullYear() }} UnivTrack</p>
       </div>
     </footer>
