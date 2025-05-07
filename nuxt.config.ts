@@ -16,7 +16,7 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
-      title: "UniTrack | Üniversite Devamsızlık Takipçisi",
+      title: "UnivTrack | Üniversite Devamsızlık Takipçisi",
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },

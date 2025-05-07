@@ -3,7 +3,7 @@
     <div class="w-full max-w-4xl">
       <div class="text-center mb-10">
         <h1 class="text-3xl md:text-4xl font-bold text-primary-600 dark:text-primary-400 mb-4">
-          UniTrack | Devamsızlık Takip Uygulaması
+          UnivTrack | Devamsızlık Takip Uygulaması
         </h1>
         <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
           Öğrenciler için ders devamsızlıklarını kolayca takip etmek için tasarlanmış mobil öncelikli bir web

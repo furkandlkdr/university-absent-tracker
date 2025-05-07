@@ -1,4 +1,4 @@
-# Attendance Tracker Web App
+# UnivTrack - Attendance Tracker Web App
 
 A web application designed to help users easily track their class attendance throughout academic terms, built with Nuxt.js, Firebase, and deployed on Vercel.
 

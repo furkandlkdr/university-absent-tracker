@@ -3,7 +3,7 @@
     <header class="bg-surface-light dark:bg-surface-dark shadow">
       <nav class="container mx-auto px-4 py-4 flex items-center justify-between">
         <NuxtLink to="/" class="text-xl font-bold text-primary-600 dark:text-primary-400">
-          UniTrack
+          UnivTrack
         </NuxtLink>
 
         <!-- Navigasyon bağlantıları (oturum açmış kullanıcılar) -->
@@ -63,7 +63,8 @@
 
     <footer class="bg-surface-light dark:bg-surface-dark shadow-inner mt-auto">
       <div class="container mx-auto px-4 py-4 text-center text-gray-600 dark:text-gray-400 text-sm">
-        &copy; {{ new Date().getFullYear() }} Devamsızlık Takip Uygulaması
+      <p>Made with ❤️ by <a href="https://github.com/furkandlkdr" class="underline hover:text-primary-500 transition-colors">Nafair</a></p>
+      <p>&copy; {{ new Date().getFullYear() }} UnivTrack</p>
       </div>
     </footer>
   </div>
