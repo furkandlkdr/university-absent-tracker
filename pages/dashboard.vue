@@ -184,38 +184,68 @@
                   <div class="space-y-3">
                     <!-- Morning Slots -->
                     <div>
-                      <h6 class="text-xs text-gray-500 dark:text-gray-400 mb-1">Öğleden Önce</h6>
+                      <div class="flex justify-between items-center mb-1">
+                        <h6 class="text-xs text-gray-500 dark:text-gray-400">Öğleden Önce</h6>
+                        <button 
+                          type="button" 
+                          @click="addMorningSlot(dayIndex)" 
+                          class="text-xs text-primary-600 dark:text-primary-400 hover:underline flex items-center"
+                          v-if="termForm.schedule[dayIndex].morningSlots.length < 5">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                          </svg>
+                          ÖÖ Ders Slotu Ekle
+                        </button>
+                      </div>
                       <div class="grid grid-cols-1 gap-2">
-                        <div class="flex items-center">
-                          <span class="text-xs w-10">1.</span>
-                          <input v-model="termForm.schedule[dayIndex].morning1" type="text"
+                        <div v-for="(slot, slotIndex) in termForm.schedule[dayIndex].morningSlots" :key="slotIndex" class="flex items-center">
+                          <span class="text-xs w-10">{{ slotIndex + 1 }}.</span>
+                          <input v-model="termForm.schedule[dayIndex].morningSlots[slotIndex]" type="text"
                             class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                             placeholder="Ders adı" />
-                        </div>
-                        <div class="flex items-center">
-                          <span class="text-xs w-10">2.</span>
-                          <input v-model="termForm.schedule[dayIndex].morning2" type="text"
-                            class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                            placeholder="Ders adı" />
+                          <button 
+                            type="button" 
+                            @click="removeSlot(dayIndex, 'morning', slotIndex)" 
+                            class="ml-1 text-gray-500 hover:text-red-500"
+                            v-if="termForm.schedule[dayIndex].morningSlots.length > 1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
                         </div>
                       </div>
                     </div>
 
                     <!-- Afternoon Slots -->
                     <div>
-                      <h6 class="text-xs text-gray-500 dark:text-gray-400 mb-1">Öğleden Sonra</h6>
+                      <div class="flex justify-between items-center mb-1">
+                        <h6 class="text-xs text-gray-500 dark:text-gray-400">Öğleden Sonra</h6>
+                        <button 
+                          type="button" 
+                          @click="addAfternoonSlot(dayIndex)" 
+                          class="text-xs text-primary-600 dark:text-primary-400 hover:underline flex items-center"
+                          v-if="termForm.schedule[dayIndex].afternoonSlots.length < 5">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                          </svg>
+                          ÖS Ders Slotu Ekle
+                        </button>
+                      </div>
                       <div class="grid grid-cols-1 gap-2">
-                        <div class="flex items-center">
-                          <span class="text-xs w-10">1.</span>
-                          <input v-model="termForm.schedule[dayIndex].afternoon1" type="text"
+                        <div v-for="(slot, slotIndex) in termForm.schedule[dayIndex].afternoonSlots" :key="slotIndex" class="flex items-center">
+                          <span class="text-xs w-10">{{ slotIndex + 1 }}.</span>
+                          <input v-model="termForm.schedule[dayIndex].afternoonSlots[slotIndex]" type="text"
                             class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                             placeholder="Ders adı" />
-                        </div>
-                        <div class="flex items-center">
-                          <span class="text-xs w-10">2.</span>
-                          <input v-model="termForm.schedule[dayIndex].afternoon2" type="text"
-                            class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                            placeholder="Ders adı" />
+                          <button 
+                            type="button" 
+                            @click="removeSlot(dayIndex, 'afternoon', slotIndex)" 
+                            class="ml-1 text-gray-500 hover:text-red-500"
+                            v-if="termForm.schedule[dayIndex].afternoonSlots.length > 1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -306,11 +336,11 @@ const termForm = ref({
   startDate: '',
   weekCount: 14, // Varsayılan olarak 14 hafta
   schedule: [
-    { morning1: '', morning2: '', afternoon1: '', afternoon2: '' }, // Monday
-    { morning1: '', morning2: '', afternoon1: '', afternoon2: '' }, // Tuesday
-    { morning1: '', morning2: '', afternoon1: '', afternoon2: '' }, // Wednesday
-    { morning1: '', morning2: '', afternoon1: '', afternoon2: '' }, // Thursday
-    { morning1: '', morning2: '', afternoon1: '', afternoon2: '' }  // Friday
+    { morningSlots: [''], afternoonSlots: [''] }, // Pazartesi
+    { morningSlots: [''], afternoonSlots: [''] }, // Salı
+    { morningSlots: [''], afternoonSlots: [''] }, // Çarşamba
+    { morningSlots: [''], afternoonSlots: [''] }, // Perşembe
+    { morningSlots: [''], afternoonSlots: [''] }  // Cuma
   ]
 })
 const termFormLoading = ref(false)
@@ -417,11 +447,11 @@ const resetTermForm = () => {
     startDate: '',
     weekCount: 14, // Varsayılan olarak 14 hafta
     schedule: [
-      { morning1: '', morning2: '', afternoon1: '', afternoon2: '' },
-      { morning1: '', morning2: '', afternoon1: '', afternoon2: '' },
-      { morning1: '', morning2: '', afternoon1: '', afternoon2: '' },
-      { morning1: '', morning2: '', afternoon1: '', afternoon2: '' },
-      { morning1: '', morning2: '', afternoon1: '', afternoon2: '' }
+      { morningSlots: [''], afternoonSlots: [''] },
+      { morningSlots: [''], afternoonSlots: [''] },
+      { morningSlots: [''], afternoonSlots: [''] },
+      { morningSlots: [''], afternoonSlots: [''] },
+      { morningSlots: [''], afternoonSlots: [''] }
     ]
   }
   termFormError.value = ''
@@ -438,12 +468,52 @@ const editTerm = (term: Term) => {
   termForm.value.startDate = term.startDate
   termForm.value.weekCount = term.weekCount || 14
 
-  // Convert the schedule array from the database structure to our form structure
-  term.schedule.forEach((course) => {
+  // Initialize empty slots for all days
+  for (let dayIndex = 0; dayIndex < 5; dayIndex++) {
+    termForm.value.schedule[dayIndex] = {
+      morningSlots: [],
+      afternoonSlots: []
+    }
+  }
+
+  // Mevcut dersleri ilgili slot dizilerine gruplayalım
+  const coursesByDay: Record<number, { morningSlots: string[], afternoonSlots: string[] }> = {}
+
+  // Önce her gün için boş dizileri hazırlayalım
+  for (let i = 0; i < 5; i++) {
+    coursesByDay[i] = { morningSlots: [], afternoonSlots: [] }
+  }
+
+  // Dönem derslerini, gün ve zaman dilimine göre gruplayalım
+  term.schedule.forEach(course => {
     const dayIndex = course.dayOfWeek
-    const timeSlot = course.timeSlot
-    termForm.value.schedule[dayIndex][timeSlot] = course.name
+    const slot = course.timeSlot
+    
+    if (slot.startsWith('morning')) {
+      coursesByDay[dayIndex].morningSlots.push(course.name)
+    } else if (slot.startsWith('afternoon')) {
+      coursesByDay[dayIndex].afternoonSlots.push(course.name)
+    }
   })
+
+  // Gruplanmış dersleri form yapısına aktaralım
+  for (let dayIndex = 0; dayIndex < 5; dayIndex++) {
+    // Sabah dersleri
+    if (coursesByDay[dayIndex].morningSlots.length > 0) {
+      termForm.value.schedule[dayIndex].morningSlots = coursesByDay[dayIndex].morningSlots
+    } else {
+      // En az bir boş slot olsun
+      termForm.value.schedule[dayIndex].morningSlots = ['']
+    }
+
+    // Öğleden sonra dersleri
+    if (coursesByDay[dayIndex].afternoonSlots.length > 0) {
+      termForm.value.schedule[dayIndex].afternoonSlots = coursesByDay[dayIndex].afternoonSlots
+    } else {
+      // En az bir boş slot olsun
+      termForm.value.schedule[dayIndex].afternoonSlots = ['']
+    }
+  }
 
   // Show edit modal
   showEditTermModal.value = true
@@ -463,43 +533,41 @@ const saveTerm = async () => {
     }
 
     // Convert the schedule from our form structure to the database structure
-    const schedule: { name: string; dayOfWeek: number; timeSlot: "morning1" | "morning2" | "afternoon1" | "afternoon2" }[] = []
+    const schedule: { name: string; dayOfWeek: number; timeSlot: string }[] = []
     for (let dayIndex = 0; dayIndex < 5; dayIndex++) {
       const day = termForm.value.schedule[dayIndex]
 
-      // Check for morning slots
-      if (day.morning1) {
-        schedule.push({
-          name: day.morning1,
-          dayOfWeek: dayIndex,
-          timeSlot: 'morning1' as "morning1"
-        })
-      }
+      // Sabah slotlarını ekleyin
+      day.morningSlots.forEach((slotName, slotIndex) => {
+        // Boş olmayan ders adlarını ekleyin
+        if (slotName.trim()) {
+          const timeSlot = slotIndex < 2 
+            ? `morning${slotIndex + 1}` 
+            : `morningExtra${slotIndex - 1}`
+            
+          schedule.push({
+            name: slotName.trim(),
+            dayOfWeek: dayIndex,
+            timeSlot
+          })
+        }
+      })
 
-      if (day.morning2) {
-        schedule.push({
-          name: day.morning2,
-          dayOfWeek: dayIndex,
-          timeSlot: 'morning2' as "morning2"
-        })
-      }
-
-      // Check for afternoon slots
-      if (day.afternoon1) {
-        schedule.push({
-          name: day.afternoon1,
-          dayOfWeek: dayIndex,
-          timeSlot: 'afternoon1' as "afternoon1"
-        })
-      }
-
-      if (day.afternoon2) {
-        schedule.push({
-          name: day.afternoon2,
-          dayOfWeek: dayIndex,
-          timeSlot: 'afternoon2' as "afternoon2"
-        })
-      }
+      // Öğleden sonra slotlarını ekleyin
+      day.afternoonSlots.forEach((slotName, slotIndex) => {
+        // Boş olmayan ders adlarını ekleyin
+        if (slotName.trim()) {
+          const timeSlot = slotIndex < 2 
+            ? `afternoon${slotIndex + 1}`
+            : `afternoonExtra${slotIndex - 1}`
+            
+          schedule.push({
+            name: slotName.trim(),
+            dayOfWeek: dayIndex,
+            timeSlot
+          })
+        }
+      })
     }
 
     // Validate that each course name is unique (no duplicate course names)
@@ -615,5 +683,28 @@ const decrementWeekCount = () => {
 const weekCountError = ref(false)
 const validateWeekCount = () => {
   weekCountError.value = termForm.value.weekCount < 5 || termForm.value.weekCount > 18
+}
+
+// Add morning slot
+const addMorningSlot = (dayIndex: number) => {
+  if (termForm.value.schedule[dayIndex].morningSlots.length < 5) {
+    termForm.value.schedule[dayIndex].morningSlots.push('')
+  }
+}
+
+// Add afternoon slot
+const addAfternoonSlot = (dayIndex: number) => {
+  if (termForm.value.schedule[dayIndex].afternoonSlots.length < 5) {
+    termForm.value.schedule[dayIndex].afternoonSlots.push('')
+  }
+}
+
+// Remove slot
+const removeSlot = (dayIndex: number, period: 'morning' | 'afternoon', slotIndex: number) => {
+  if (period === 'morning') {
+    termForm.value.schedule[dayIndex].morningSlots.splice(slotIndex, 1)
+  } else {
+    termForm.value.schedule[dayIndex].afternoonSlots.splice(slotIndex, 1)
+  }
 }
 </script>

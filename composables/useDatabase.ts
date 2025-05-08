@@ -9,7 +9,7 @@ import { format, addWeeks, parseISO, differenceInWeeks, isBefore } from 'date-fn
 interface Course {
   name: string;
   dayOfWeek: number; // 0-4 for Monday-Friday
-  timeSlot: 'morning1' | 'morning2' | 'afternoon1' | 'afternoon2';
+  timeSlot: string; // Dinamik slot adlarını kabul etmek için string olarak değiştirildi
 }
 
 export interface Term {
@@ -300,7 +300,7 @@ export const useDatabase = () => {
   const generateTermCalendar = (term: Term) => {
     const startDate = parseISO(term.startDate)
     const weekCount = term.weekCount || 14 // Varsayılan olarak 14 hafta
-    const calendar: { date: string; courseName: string; weekNumber: number; timeSlot: "morning1" | "morning2" | "afternoon1" | "afternoon2"; isPast: boolean; }[] = []
+    const calendar: { date: string; courseName: string; weekNumber: number; timeSlot: string; isPast: boolean; }[] = []
     
     // Generate weeks of classes based on the term's weekCount
     for (let week = 0; week < weekCount; week++) {
