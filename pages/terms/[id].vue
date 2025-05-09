@@ -507,8 +507,14 @@ const getTimeSlotLabel = (timeSlot: string) => {
   const labels = {
     'morning1': 'Öğleden Önce - 1. Slot',
     'morning2': 'Öğleden Önce - 2. Slot',
+    'morningExtra1': 'Öğleden Önce - 3. Slot',
+    'morningExtra2': 'Öğleden Önce - 4. Slot',
+    'morningExtra3': 'Öğleden Önce - 5. Slot',
     'afternoon1': 'Öğleden Sonra - 1. Slot',
-    'afternoon2': 'Öğleden Sonra - 2. Slot'
+    'afternoon2': 'Öğleden Sonra - 2. Slot',
+    'afternoonExtra1': 'Öğleden Sonra - 3. Slot',
+    'afternoonExtra2': 'Öğleden Sonra - 4. Slot',
+    'afternoonExtra3': 'Öğleden Sonra - 5. Slot'
   }
 
   return labels[timeSlot as keyof typeof labels] || timeSlot
