@@ -79,6 +79,16 @@
               <span class="text-sm">Ders henüz başlamamış</span>
             </div>
           </div>
+        </div>        <!-- New Tip/Hint for bulk update -->
+        <div class="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-lg p-4 text-sm flex items-start shadow-sm border border-blue-200 dark:border-blue-800">
+          <div class="flex-shrink-0 mt-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1v-3a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-2">
+            <strong>Toplu Devamsızlık Güncelleme!</strong> Bir duruma (Gittim/Gitmedim/Tatil) <strong>uzun basarak</strong>, ilgili dersin önceki haftalarını topluca güncelleyebilirsiniz. İşaretlenmemiş haftalar için otomatik olarak yeni kayıtlar oluşturulur, var olan kayıtlar ise güncellenir (tatiller korunur).
+          </div>
         </div>
 
         <!-- Week Navigation -->
@@ -154,11 +164,23 @@
                         İşaretlenmedi
                       </div>
                       <div v-else class="flex space-x-2">
-                        <button v-for="status in ['Gittim', 'Gitmedim', 'Tatil / Ders Yok']" :key="status" :class="[
-                          'text-sm px-3 py-1 rounded-md',
-                          getAttendanceStatus(entry) === status ? getStatusButtonClass(status, true) : getStatusButtonClass(status, false),
-                          term.isReadOnly ? 'cursor-not-allowed opacity-75' : 'cursor-pointer hover:opacity-90'
-                        ]" :disabled="term.isReadOnly" @click="!term.isReadOnly && updateAttendance(entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')">
+                        <button 
+                          v-for="status in ['Gittim', 'Gitmedim', 'Tatil / Ders Yok']" 
+                          :key="status" 
+                          :class="[
+                            'text-sm px-3 py-1 rounded-md',
+                            getAttendanceStatus(entry) === status ? getStatusButtonClass(status, true) : getStatusButtonClass(status, false),
+                            term.isReadOnly ? 'cursor-not-allowed opacity-75' : 'cursor-pointer hover:opacity-90'
+                          ]" 
+                          :disabled="term.isReadOnly" 
+                          @touchstart="!term.isReadOnly && onStatusButtonTouchStart($event, entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')"
+                          @touchend="onStatusButtonTouchEnd"
+                          @touchmove="onStatusButtonTouchMove"
+                          @touchcancel="onStatusButtonTouchEnd"
+                          @mousedown="!term.isReadOnly && onStatusButtonMouseDown($event, entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')"
+                          @mouseup="onStatusButtonMouseUp"
+                          @mouseleave="onStatusButtonMouseLeave"
+                          @click.prevent="!term.isReadOnly && updateAttendance(entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')">
                           {{ status }}
                         </button>
                       </div>
@@ -216,6 +238,55 @@
         </div>
       </div>
     </div>
+
+    <!-- Bulk Update Confirmation Modal -->
+    <div v-if="showBulkUpdateModal" 
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto"
+      @click.self="cancelBulkUpdate">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-md w-full mx-4 mb-4 relative">
+        <!-- Close button -->
+        <button @click="cancelBulkUpdate" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        
+        <div class="p-5 border-b border-gray-200 dark:border-gray-700">
+          <h3 class="text-lg font-semibold">Toplu Güncelleme</h3>
+        </div>        <div class="p-5">
+          <p class="mb-4 text-gray-700 dark:text-gray-300">
+            <strong>{{ bulkUpdateData.courseName }}</strong> dersinin ilk <strong>{{ bulkUpdateData.targetWeek }}</strong> haftasına ait
+            devam durumlarını (tatiller hariç) '<strong>{{ bulkUpdateData.newStatus }}</strong>' olarak güncellemek istediğinize emin misiniz?
+          </p>
+          <p class="text-sm text-blue-600 dark:text-blue-400 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1v-3a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+            Henüz işaretlenmemiş haftalar için otomatik olarak yeni kayıtlar oluşturulacaktır.
+          </p>
+          
+          <div class="flex justify-end space-x-3 mt-6">
+            <button @click="cancelBulkUpdate"
+              class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700">
+              İptal
+            </button>
+            <button @click="confirmBulkUpdate" :disabled="bulkUpdateLoading"
+              class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md disabled:opacity-50">
+              {{ bulkUpdateLoading ? 'Güncelleniyor...' : 'Güncelle' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div v-if="showToast" 
+      class="fixed bottom-4 right-4 p-3 rounded-md shadow-lg z-50 transition-opacity duration-300" 
+      :class="[
+        toastType === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+      ]">
+      {{ toastMessage }}
+    </div>
   </div>
 </template>
 
@@ -230,7 +301,7 @@ import { useAuth } from '~/composables/useAuth'
 const route = useRoute()
 const router = useRouter()
 const { isLoggedIn } = useAuth()
-const { getTerm, getAttendanceRecords, updateAttendanceStatus, getTermStatistics, generateTermCalendar } = useDatabase()
+const { getTerm, getAttendanceRecords, updateAttendanceStatus, bulkUpdateAttendance, getTermStatistics, generateTermCalendar } = useDatabase()
 
 // State
 const termId = ref(route.params.id as string)
@@ -249,6 +320,26 @@ const weekDropdownRef = ref(null)
 onClickOutside(weekDropdownRef, () => {
   weekDropdownOpen.value = false
 })
+
+// Long-press variables
+let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+const longPressDelay = 600; // milliseconds
+
+// Bulk update state
+const showBulkUpdateModal = ref(false);
+const bulkUpdateLoading = ref(false);
+const bulkUpdateData = ref({
+  termId: '',
+  courseName: '',
+  targetWeek: 0,
+  newStatus: '' as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok'
+});
+
+// Toast notification state
+const showToast = ref(false);
+const toastMessage = ref('');
+const toastType = ref<'success' | 'error'>('success');
+const toastTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
 
 // Computed property for the selected week's data
 const selectedWeekData = computed(() => {
@@ -501,4 +592,145 @@ const totalWeeks = computed(() => {
   }
   return term.value ? (groupedCalendar.value.length || 14) : 14;
 })
+
+// Long press event handlers for touch devices
+const onStatusButtonTouchStart = (event: TouchEvent, entry: any, status: 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok') => {
+  // Prevent the default behavior to avoid triggering click events
+  event.preventDefault();
+  
+  // Start long press timer
+  startLongPressTimer(entry, status);
+};
+
+const onStatusButtonTouchEnd = () => {
+  clearLongPressTimer();
+};
+
+const onStatusButtonTouchMove = () => {
+  // Cancel long press if touch moves too much
+  clearLongPressTimer();
+};
+
+// Long press event handlers for desktop/mouse devices
+const onStatusButtonMouseDown = (event: MouseEvent, entry: any, status: 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok') => {
+  // Start long press timer only for left click
+  if (event.button === 0) {
+    startLongPressTimer(entry, status);
+  }
+};
+
+const onStatusButtonMouseUp = () => {
+  clearLongPressTimer();
+};
+
+const onStatusButtonMouseLeave = () => {
+  clearLongPressTimer();
+};
+
+// Helper method to start the long press timer
+const startLongPressTimer = (entry: any, status: 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok') => {
+  // Clear any existing timer
+  clearLongPressTimer();
+  
+  // Only allow long press on past dates
+  if (!entry.isPast || term.value?.isReadOnly) return;
+  
+  // Set a new timer
+  longPressTimer = setTimeout(() => {
+    // Open bulk update modal
+    openBulkUpdateModal(entry.courseName, entry.weekNumber, status);
+  }, longPressDelay);
+};
+
+// Helper method to clear the long press timer
+const clearLongPressTimer = () => {
+  if (longPressTimer) {
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+  }
+};
+
+// Open the bulk update confirmation modal
+const openBulkUpdateModal = (courseName: string, targetWeek: number, newStatus: 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok') => {
+  bulkUpdateData.value = {
+    termId: termId.value,
+    courseName,
+    targetWeek,
+    newStatus
+  };
+  
+  showBulkUpdateModal.value = true;
+};
+
+// Cancel the bulk update
+const cancelBulkUpdate = () => {
+  showBulkUpdateModal.value = false;
+};
+
+// Confirm and execute the bulk update
+const confirmBulkUpdate = async () => {
+  bulkUpdateLoading.value = true;
+  
+  try {
+    const result = await bulkUpdateAttendance(
+      bulkUpdateData.value.termId,
+      bulkUpdateData.value.courseName,
+      bulkUpdateData.value.targetWeek,
+      bulkUpdateData.value.newStatus
+    );
+    
+    if (result.success) {
+      // Show success toast with updated and created count
+      let message = '';
+      const createdCount = 'createdCount' in result ? result.createdCount : 0;
+      
+      if (result.updatedCount > 0 && createdCount > 0) {
+        message = `${result.updatedCount} kayıt güncellendi, ${createdCount} yeni kayıt oluşturuldu.`;
+      } else if (result.updatedCount > 0) {
+        message = `${result.updatedCount} kayıt başarıyla güncellendi.`;
+      } else if (createdCount > 0) {
+        message = `${createdCount} yeni kayıt başarıyla oluşturuldu.`;
+      } else {
+        message = 'İşlem tamamlandı, ancak hiçbir değişiklik yapılmadı.';
+      }
+      
+      showToastMessage(message, 'success');
+      
+      // Refresh attendance records
+      attendanceRecords.value = await getAttendanceRecords(termId.value);
+      
+      // Update statistics
+      if (term.value) {
+        statistics.value = getTermStatistics(term.value, attendanceRecords.value);
+      }
+      
+      // Close modal
+      showBulkUpdateModal.value = false;
+    } else {
+      // Show error toast
+      showToastMessage(`Güncelleme başarısız: ${result.error}`, 'error');
+    }
+  } catch (error: any) {
+    showToastMessage(`Bir hata oluştu: ${error.message}`, 'error');
+  } finally {
+    bulkUpdateLoading.value = false;
+  }
+};
+
+// Show toast message
+const showToastMessage = (message: string, type: 'success' | 'error') => {
+  // Clear existing timeout if there is one
+  if (toastTimeout.value) {
+    clearTimeout(toastTimeout.value);
+  }
+  
+  toastMessage.value = message;
+  toastType.value = type;
+  showToast.value = true;
+  
+  // Toast mesajını 6 saniye göstereceğiz (daha görünür olması için)
+  toastTimeout.value = setTimeout(() => {
+    showToast.value = false;
+  }, 6000);
+};
 </script>

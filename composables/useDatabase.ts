@@ -1,6 +1,6 @@
 import { 
   collection, doc, addDoc, updateDoc, deleteDoc, 
-  getDocs, getDoc, query, where, orderBy, Timestamp,
+  getDocs, getDoc, query, where, orderBy, Timestamp, writeBatch,
   type Firestore
 } from 'firebase/firestore'
 import { format, addWeeks, parseISO, differenceInWeeks, isBefore } from 'date-fns'
@@ -43,6 +43,7 @@ export const useDatabase = () => {
       deleteTerm: async () => ({ success: false, error: 'Server-side rendering' }),
       getAttendanceRecords: async () => [] as AttendanceRecord[],
       updateAttendanceStatus: async () => ({ success: false, error: 'Server-side rendering' }),
+      bulkUpdateAttendance: async () => ({ success: false, updatedCount: 0, error: 'Server-side rendering' }),
       getTermStatistics: () => [],
       generateTermCalendar: () => []
     }
@@ -70,6 +71,7 @@ export const useDatabase = () => {
       deleteTerm: async () => ({ success: false, error: 'Firestore not initialized' }),
       getAttendanceRecords: async () => [] as AttendanceRecord[],
       updateAttendanceStatus: async () => ({ success: false, error: 'Firestore not initialized' }),
+      bulkUpdateAttendance: async () => ({ success: false, updatedCount: 0, error: 'Firestore not initialized' }),
       getTermStatistics: () => [],
       generateTermCalendar: () => []
     }
@@ -255,6 +257,119 @@ export const useDatabase = () => {
       return { success: false, error: error.message }
     }
   }
+    // Bulk update attendance records
+  const bulkUpdateAttendance = async (
+    termId: string,
+    courseName: string,
+    targetWeek: number,
+    newStatus: 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok'
+  ) => {
+    const userId = getUserId();
+    if (!userId) return { success: false, updatedCount: 0, createdCount: 0, error: 'User not authenticated' };
+    
+    try {
+      // İlk olarak o dönemin takvimini almak için term'i getir
+      const termDoc = await getTerm(termId);
+      if (!termDoc) {
+        return { success: false, updatedCount: 0, createdCount: 0, error: 'Dönem bulunamadı' };
+      }
+      
+      // Dönem takvimdeki tüm dersleri oluştur
+      const calendar = generateTermCalendar(termDoc);
+      
+      // Hedeflenen dersle ilgili tüm günleri filtrele (1. haftadan targetWeek'e kadar)
+      const targetDays = calendar.filter(entry => 
+        entry.courseName === courseName && 
+        entry.weekNumber >= 1 && 
+        entry.weekNumber <= targetWeek &&
+        entry.isPast // Sadece geçmiş günleri güncelle
+      );
+
+      if (targetDays.length === 0) {
+        return { success: true, updatedCount: 0, createdCount: 0, error: null };
+      }
+      
+      // Şimdi mevcut kayıtları getir
+      const q = query(
+        recordsRef,
+        where('userId', '==', userId),
+        where('termId', '==', termId),
+        where('courseName', '==', courseName),
+        where('weekNumber', '<=', targetWeek)
+      );
+      
+      console.log('Bulk update query prepared for:', { userId, termId, courseName, targetWeek });
+      
+      const querySnapshot = await getDocs(q);
+      
+      // Veritabanındaki kayıtları tarih bazlı bir haritada sakla
+      const existingRecords = new Map();
+      querySnapshot.docs.forEach(doc => {
+        const record = doc.data() as AttendanceRecord;
+        // Tarih, kayıt çiftini sakla
+        existingRecords.set(record.date, {
+          docRef: doc.ref,
+          record: record
+        });
+      });
+      
+      // Batch işlemi oluştur
+      const batch = writeBatch(db);
+      let updatedCount = 0;
+      let createdCount = 0;
+      
+      // Şimdi tüm hedef günler için kayıt güncelle veya yeni kayıt ekle
+      for (const day of targetDays) {
+        const existingEntry = existingRecords.get(day.date);
+        
+        if (existingEntry) {
+          // Kayıt zaten var - güncellemeyi değerlendir
+          const record = existingEntry.record;
+          
+          // Tatil günlerini atla - istenmedikçe
+          if (record.status !== 'Tatil / Ders Yok' || newStatus === 'Tatil / Ders Yok') {
+            updatedCount++;
+            batch.update(existingEntry.docRef, { status: newStatus });
+            console.log(`Updating record for ${day.date} to status: ${newStatus}`);
+          } else {
+            console.log(`Skipping holiday record for ${day.date}`);
+          }
+        } else {
+          // Kayıt yok, yeni bir kayıt oluştur
+          createdCount++;
+          const newRecord = {
+            userId,
+            termId,
+            courseName,
+            date: day.date,
+            weekNumber: day.weekNumber,
+            status: newStatus
+          };
+          
+          const newDocRef = doc(recordsRef);
+          batch.set(newDocRef, newRecord);
+          console.log(`Creating new record for ${day.date} with status: ${newStatus}`);
+        }
+      }
+        // Commit the batch
+      await batch.commit();
+      
+      return { 
+        success: true, 
+        updatedCount,
+        createdCount,
+        error: null 
+      };
+    } catch (error: any) {
+      console.error('Error in bulk update:', error);
+      return { 
+        success: false, 
+        updatedCount: 0,
+        createdCount: 0,
+        error: error.message || 'Bulk update failed' 
+      };
+    }
+  };
   
   // Calculate attendance statistics for a term
   const getTermStatistics = (term: Term, records: AttendanceRecord[]) => {
@@ -340,6 +455,7 @@ export const useDatabase = () => {
     deleteTerm,
     getAttendanceRecords,
     updateAttendanceStatus,
+    bulkUpdateAttendance,
     getTermStatistics,
     generateTermCalendar
   }

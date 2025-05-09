@@ -13,6 +13,7 @@ This application provides a simple interface for users to define their academic 
 * **Weekly Schedule Definition:** Define a weekly class schedule (Monday-Friday) with up to 2 morning and 2 afternoon slots per day. Each course slot occurs once per week.
 * **Customizable Term Length:** Choose your term length from 5 to 18 weeks to match your academic calendar.
 * **Attendance Marking:** Mark attendance for past and current days within an active term using statuses: "Attended", "Absent", or "Holiday / No Class".
+* **Long Press for Bulk Updates:** Use long press on attendance buttons to quickly apply the same status to multiple classes in sequence, improving efficiency for bulk attendance updates.
 * **Dynamic Absence Reporting:** Displays a list of courses for the selected term showing absences in the format `Course Name: X / Y`.
     * `X`: Total count of "Absent" marks for the course.
     * `Y`: Number of weeks passed for that specific course within the term, *excluding* weeks marked as "Holiday / No Class".
@@ -27,8 +28,9 @@ This application provides a simple interface for users to define their academic 
 2.  **Term Dashboard:** After login, users see a list of their created terms.
 3.  **Create/Select Term:** Users can add a new term (providing a name, start date, and weekly schedule) or select an existing active term to view.
 4.  **View & Mark Attendance:** Selecting an active term shows the schedule. Users can click on past or present class slots to mark their attendance status.
-5.  **Track Absences:** The application maintains a running count of absences (`X`) and calculates the relevant number of weeks passed (`Y`) for each course in the selected term, displaying it as `X / Y`.
-6.  **Review Status:** Users can quickly see which courses are approaching the absence limit thanks to the red highlighting. Completed terms can be reviewed but not modified.
+5.  **Bulk Status Updates:** Users can long press on any attendance button to update multiple weeks at once. After initiating a long press, a confirmation dialog appears allowing users to apply the same status to all subsequent classes of the same type in the term.
+6.  **Track Absences:** The application maintains a running count of absences (`X`) and calculates the relevant number of weeks passed (`Y`) for each course in the selected term, displaying it as `X / Y`.
+7.  **Review Status:** Users can quickly see which courses are approaching the absence limit thanks to the red highlighting. Completed terms can be reviewed but not modified.
 
 ## Tech Stack
 
