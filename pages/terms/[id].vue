@@ -176,11 +176,10 @@
                           @touchstart="!term.isReadOnly && onStatusButtonTouchStart($event, entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')"
                           @touchend="onStatusButtonTouchEnd"
                           @touchmove="onStatusButtonTouchMove"
-                          @touchcancel="onStatusButtonTouchEnd"
-                          @mousedown="!term.isReadOnly && onStatusButtonMouseDown($event, entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')"
+                          @touchcancel="onStatusButtonTouchEnd"                          @mousedown="!term.isReadOnly && onStatusButtonMouseDown($event, entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')"
                           @mouseup="onStatusButtonMouseUp"
                           @mouseleave="onStatusButtonMouseLeave"
-                          @click.prevent="!term.isReadOnly && updateAttendance(entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')">
+                          @click="!term.isReadOnly && updateAttendance(entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')">
                           {{ status }}
                         </button>
                       </div>
@@ -601,10 +600,8 @@ const totalWeeks = computed(() => {
 
 // Long press event handlers for touch devices
 const onStatusButtonTouchStart = (event: TouchEvent, entry: any, status: 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok') => {
-  // Prevent the default behavior to avoid triggering click events
-  event.preventDefault();
-  
-  // Start long press timer
+  // Start long press timer without preventing default behavior
+  // This allows normal click events to still work
   startLongPressTimer(entry, status);
 };
 
@@ -635,8 +632,8 @@ const onStatusButtonMouseLeave = () => {
 
 // Helper method to start the long press timer
 const startLongPressTimer = (entry: any, status: 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok') => {
-  // Clear any existing timer
-  clearLongPressTimer();
+  // If timer is already active, don't start a new one
+  if (longPressTimer) return;
   
   // Only allow long press on past dates
   if (!entry.isPast || term.value?.isReadOnly) return;
