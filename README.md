@@ -18,19 +18,21 @@ This application provides a simple interface for users to define their academic 
     * `X`: Total count of "Absent" marks for the course.
     * `Y`: Number of weeks passed for that specific course within the term, *excluding* weeks marked as "Holiday / No Class".
 * **Absence Warnings:** Courses with 3 or 4 absences (`X` value) are automatically highlighted in red.
-* **Read-Only Completed Terms:** Terms automatically become read-only when all weeks have passed, preserving historical data.
+* **Automatic Read-Only Mode:** Terms automatically switch to read-only mode when their academic period ends (calculated from start date + week count). This check runs on user login and when viewing terms.
+* **Read-Only Completed Terms:** Terms in read-only mode preserve historical data while preventing any modifications. Users can still view attendance records and statistics.
 * **Mobile-First Design:** Responsive interface optimized for mobile devices.
 * **Theme Customization:** Choose your preferred color scheme (light, dark, or system) and customize the theme color with an interactive color picker.
 
 ## How It Works
 
-1.  **Sign Up / Log In:** Users create an account or log in using their email and password.
-2.  **Term Dashboard:** After login, users see a list of their created terms.
-3.  **Create/Select Term:** Users can add a new term (providing a name, start date, and weekly schedule) or select an existing active term to view.
-4.  **View & Mark Attendance:** Selecting an active term shows the schedule. Users can click on past or present class slots to mark their attendance status.
+1.  **Sign Up / Log In:** Users create an account or log in using their email and password. On login, the system automatically checks all user terms for read-only status.
+2.  **Term Dashboard:** After login, users see a list of their created terms with accurate read-only status indicators.
+3.  **Create/Select Term:** Users can add a new term (providing a name, start date, and weekly schedule) or select an existing term to view.
+4.  **View & Mark Attendance:** Selecting a term shows the schedule. For active terms, users can click on past or present class slots to mark their attendance status. Read-only terms display a warning and prevent modifications.
 5.  **Bulk Status Updates:** Users can long press on any attendance button to update multiple weeks at once. After initiating a long press, a confirmation dialog appears allowing users to apply the same status to all subsequent classes of the same type in the term.
 6.  **Track Absences:** The application maintains a running count of absences (`X`) and calculates the relevant number of weeks passed (`Y`) for each course in the selected term, displaying it as `X / Y`.
-7.  **Review Status:** Users can quickly see which courses are approaching the absence limit thanks to the red highlighting. Completed terms can be reviewed but not modified.
+7.  **Automatic Read-Only Transition:** When a term's academic period ends (start date + week count), it automatically becomes read-only to preserve historical data while preventing accidental modifications.
+8.  **Review Status:** Users can quickly see which courses are approaching the absence limit thanks to the red highlighting. Completed terms can be reviewed but not modified.
 
 ## Tech Stack
 
