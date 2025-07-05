@@ -1,1 +1,0 @@
-import{Q as t,n as e}from"./DzMhsBOq.js";import{u as o}from"./DBcKAFuA.js";const n=t((a,s)=>{const{isLoggedIn:r}=o();if(!r.value&&a.path!=="/"&&a.path!=="/login"&&a.path!=="/register"&&a.path!=="/forgot-password")return e("/login");if(r.value&&(a.path==="/login"||a.path==="/register"||a.path==="/forgot-password"))return e("/dashboard")});export{n as default};

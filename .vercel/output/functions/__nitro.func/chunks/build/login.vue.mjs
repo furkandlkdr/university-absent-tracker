@@ -2,6 +2,7 @@ import { _ as __nuxt_component_0 } from './nuxt-link.mjs';
 import { defineComponent, ref, mergeProps, unref, withCtx, createTextVNode, useSSRContext } from 'vue';
 import { ssrRenderAttrs, ssrRenderAttr, ssrRenderComponent, ssrInterpolate, ssrIncludeBooleanAttr } from 'vue/server-renderer';
 import { u as useAuth } from './useAuth.mjs';
+import { u as useDatabase } from './useDatabase.mjs';
 import { a as useRouter } from './server.mjs';
 import '../nitro/nitro.mjs';
 import 'node:http';
@@ -25,6 +26,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
   __ssrInlineRender: true,
   setup(__props) {
     useAuth();
+    const { getTerms } = useDatabase();
     useRouter();
     const email = ref("");
     const password = ref("");

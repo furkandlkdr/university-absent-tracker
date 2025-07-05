@@ -10,7 +10,8 @@ const useDatabase = () => {
       updateAttendanceStatus: async () => ({ success: false, error: "Server-side rendering" }),
       bulkUpdateAttendance: async () => ({ success: false, updatedCount: 0, error: "Server-side rendering" }),
       getTermStatistics: () => [],
-      generateTermCalendar: () => []
+      generateTermCalendar: () => [],
+      checkAndUpdateTermReadOnlyStatus: async () => ({})
     };
   }
 };
