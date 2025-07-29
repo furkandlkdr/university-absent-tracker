@@ -397,6 +397,16 @@ onMounted(async () => {
   })
 })
 
+// Add error handling for term operations
+const handleTermOperation = async (operation: () => Promise<any>) => {
+  try {
+    await operation()
+  } catch (error) {
+    console.error('Terim işlemi sırasında hata oluştu:', error)
+    // Kullanıcıya hata mesajı göstermek için bir toast veya alert gösterilebilir
+  }
+}
+
 // Format date for display
 const formatDate = (dateString: string) => {
   try {

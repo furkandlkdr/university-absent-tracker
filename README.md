@@ -85,6 +85,7 @@ To run this project locally, follow these steps:
         # NUXT_PUBLIC_FIREBASE_MEASUREMENT_ID=G-... (Optional)
         ```
     * **Important:** Ensure your `.env` file is listed in your `.gitignore` file to prevent accidentally committing sensitive keys.
+    * **Note:** For Vercel deployments, you'll need to add these environment variables in your project settings.
 
 5.  **Run the development server:**
     ```bash

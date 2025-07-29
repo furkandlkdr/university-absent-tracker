@@ -223,7 +223,7 @@ export const useDatabase = () => {
     }
   }
   
-  // Add or update attendance record
+  // Add or update attendance record with better error handling
   const updateAttendanceStatus = async (record: Omit<AttendanceRecord, 'id' | 'userId'>) => {
     const userId = getUserId();
     if (!userId) return { success: false, error: 'User not authenticated' }
@@ -254,7 +254,8 @@ export const useDatabase = () => {
       
       return { success: true, error: null }
     } catch (error: any) {
-      return { success: false, error: error.message }
+      console.error('Attendance status update error:', error)
+      return { success: false, error: error.message || 'Failed to update attendance status' }
     }
   }
     // Bulk update attendance records

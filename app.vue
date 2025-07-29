@@ -7,13 +7,12 @@
 </template>
 
 <script setup lang="ts">
-const user = useState('user', () => null)
-const isLoggedIn = computed(() => !!user.value)
+const { user, isLoggedIn } = useAuth()
 
 const colorMode = useColorMode()
 
 // Tema yönetimi değişkenleri
-const currentHue = useState('theme-hue', () => {
+const currentHue = useState<number>('theme-hue', () => {
   // Başlangıçta localStorage'dan değeri almaya çalış (varsayılan: 240)
   return process.client ? parseInt(localStorage.getItem('theme-hue') || '240') : 240
 })

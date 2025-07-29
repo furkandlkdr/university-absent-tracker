@@ -69,6 +69,7 @@ const handleResetPassword = async () => {
       success.value = true
     }
   } catch (e: any) {
+    console.error('Şifre sıfırlama hatası:', e)
     error.value = e.message || 'Şifre sıfırlama sırasında bir hata oluştu. Lütfen tekrar deneyin.'
   } finally {
     loading.value = false

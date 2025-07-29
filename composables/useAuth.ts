@@ -3,7 +3,7 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   onAuthStateChanged,
-  signOut, // Logout için signOut ekliyorum
+  signOut,
   type User, 
   type Auth
 } from "firebase/auth";
@@ -27,27 +27,13 @@ export const useAuth = () => {
     }
   };
 
-  // Monitor auth state - Use onNuxtReady for client-side execution
-  onMounted(() => {
-    if (process.client) {
+  // Initialize auth listener immediately
+  if (process.client) {
+    // Small delay to ensure Firebase is fully initialized
+    setTimeout(() => {
       initializeAuthListener();
-
-      // Watch for auth becoming available if plugin loads later
-      watch(auth, (newAuth) => {
-        if (newAuth && !unsubscribeAuthListener) {
-          initializeAuthListener();
-        }
-      });
-    }
-  });
-
-  // Cleanup on component unmount
-  onUnmounted(() => {
-    if (unsubscribeAuthListener) {
-      unsubscribeAuthListener();
-      unsubscribeAuthListener = null; // Reset flag
-    }
-  });
+    }, 100);
+  }
 
   // Register a new user
   const register = async (email: string, password: string) => {

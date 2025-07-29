@@ -93,7 +93,7 @@ export default defineNuxtConfig({
   },
   // Nuxt 3'te global middleware yapılandırması
   routeRules: {
-    "/**": { middleware: ["auth"] },
+    "/**": { appMiddleware: ["auth"] },
   },
   // For Vercel deployment
   nitro: {

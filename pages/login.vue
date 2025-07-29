@@ -97,6 +97,7 @@ const handleLogin = async () => {
       router.push('/dashboard')
     }
   } catch (e: any) {
+    console.error('Giriş hatası:', e)
     error.value = e.message || 'Giriş sırasında bir hata oluştu. Lütfen tekrar deneyin.'
   } finally {
     loading.value = false

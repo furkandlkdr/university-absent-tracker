@@ -75,7 +75,7 @@ import { useRouter } from 'vue-router'
 import { getAuth, signOut } from 'firebase/auth'
 import { onClickOutside } from '@vueuse/core'
 
-const isLoggedIn = useState('user')
+const { isLoggedIn, logout } = useAuth()
 const router = useRouter()
 
 // Tema seçici görünürlüğü
@@ -90,12 +90,13 @@ onClickOutside(themeSelectorRef, () => {
 // Kullanıcı çıkış işlemi
 const handleLogout = async () => {
   try {
-    const auth = getAuth()
-    await signOut(auth)
-    // Kullanıcı durumunu sıfırla
-    useState('user').value = null
-    // Ana sayfaya yönlendir
-    router.push('/')
+    const result = await logout()
+    if (result.success) {
+      // Ana sayfaya yönlendir
+      router.push('/')
+    } else {
+      console.error('Çıkış yapılırken hata oluştu:', result.error)
+    }
   } catch (error) {
     console.error('Çıkış yapılırken hata oluştu:', error)
   }

@@ -111,6 +111,7 @@ const handleRegister = async () => {
       router.push('/dashboard')
     }
   } catch (e: any) {
+    console.error('Kayıt hatası:', e)
     error.value = e.message || 'Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin.'
   } finally {
     loading.value = false

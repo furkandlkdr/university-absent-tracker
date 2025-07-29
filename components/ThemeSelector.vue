@@ -89,9 +89,9 @@ const colorMode = useColorMode()
 
 // Renk tonu
 const hue = ref(240)
-const setThemeHue = inject('setThemeHue', (val: number) => { })
-const themeHue = inject('themeHue', ref(240))
-const setModeFunction = inject('setColorMode', (mode: 'light' | 'dark' | 'system') => { })
+const setThemeHue = inject<(val: number) => void>('setThemeHue', (val: number) => { })
+const themeHue = inject<Ref<number>>('themeHue', ref(240))
+const setModeFunction = inject<(mode: 'light' | 'dark' | 'system') => void>('setColorMode', (mode: 'light' | 'dark' | 'system') => { })
 
 // Component oluşturulduğunda mevcut değeri kullan (istemci tarafında)
 onBeforeMount(() => {

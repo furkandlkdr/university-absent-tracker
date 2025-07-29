@@ -168,7 +168,7 @@
                           v-for="status in ['Gittim', 'Gitmedim', 'Tatil / Ders Yok']" 
                           :key="status" 
                           :class="[
-                            'text-sm px-3 py-1 rounded-md',
+                            'text-sm px-3 py-1 rounded-md select-none',
                             getAttendanceStatus(entry) === status ? getStatusButtonClass(status, true) : getStatusButtonClass(status, false),
                             term.isReadOnly ? 'cursor-not-allowed opacity-75' : 'cursor-pointer hover:opacity-90'
                           ]" 
@@ -176,10 +176,12 @@
                           @touchstart="!term.isReadOnly && onStatusButtonTouchStart($event, entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')"
                           @touchend="onStatusButtonTouchEnd"
                           @touchmove="onStatusButtonTouchMove"
-                          @touchcancel="onStatusButtonTouchEnd"                          @mousedown="!term.isReadOnly && onStatusButtonMouseDown($event, entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')"
+                          @touchcancel="onStatusButtonTouchEnd"
+                          @mousedown="!term.isReadOnly && onStatusButtonMouseDown($event, entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')"
                           @mouseup="onStatusButtonMouseUp"
                           @mouseleave="onStatusButtonMouseLeave"
-                          @click="!term.isReadOnly && updateAttendance(entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')">
+                          @click="!term.isReadOnly && updateAttendance(entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')"
+                          onselectstart="return false">
                           {{ status }}
                         </button>
                       </div>
@@ -598,59 +600,69 @@ const totalWeeks = computed(() => {
   return term.value ? (groupedCalendar.value.length || 14) : 14;
 })
 
+// Long press event handlers using the composable
+const { isLongPressing, onLongPressStart, onLongPressEnd, onLongPressCancel } = useLongPress((event: Event) => {
+  // Long press callback - determine which element was long pressed
+  const target = event.target as HTMLElement;
+  const button = target.closest('button[data-course-name][data-week-number][data-status]');
+  
+  if (button) {
+    const courseName = button.getAttribute('data-course-name');
+    const weekNumber = parseInt(button.getAttribute('data-week-number') || '0');
+    const status = button.getAttribute('data-status') as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok';
+    
+    if (courseName && weekNumber && status) {
+      openBulkUpdateModal(courseName, weekNumber, status);
+    }
+  }
+}, 600);
+
 // Long press event handlers for touch devices
 const onStatusButtonTouchStart = (event: TouchEvent, entry: any, status: 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok') => {
-  // Start long press timer without preventing default behavior
-  // This allows normal click events to still work
-  startLongPressTimer(entry, status);
+  // Only allow long press on past dates
+  if (!entry.isPast || term.value?.isReadOnly) return;
+  
+  // Set data attributes for the long press handler
+  const target = event.target as HTMLElement;
+  target.setAttribute('data-course-name', entry.courseName);
+  target.setAttribute('data-week-number', entry.weekNumber.toString());
+  target.setAttribute('data-status', status);
+  
+  onLongPressStart(event);
 };
 
 const onStatusButtonTouchEnd = () => {
-  clearLongPressTimer();
+  onLongPressEnd();
 };
 
 const onStatusButtonTouchMove = () => {
   // Cancel long press if touch moves too much
-  clearLongPressTimer();
+  onLongPressCancel();
 };
 
 // Long press event handlers for desktop/mouse devices
 const onStatusButtonMouseDown = (event: MouseEvent, entry: any, status: 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok') => {
-  // Start long press timer only for left click
-  if (event.button === 0) {
-    startLongPressTimer(entry, status);
-  }
-};
-
-const onStatusButtonMouseUp = () => {
-  clearLongPressTimer();
-};
-
-const onStatusButtonMouseLeave = () => {
-  clearLongPressTimer();
-};
-
-// Helper method to start the long press timer
-const startLongPressTimer = (entry: any, status: 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok') => {
-  // If timer is already active, don't start a new one
-  if (longPressTimer) return;
-  
   // Only allow long press on past dates
   if (!entry.isPast || term.value?.isReadOnly) return;
   
-  // Set a new timer
-  longPressTimer = setTimeout(() => {
-    // Open bulk update modal
-    openBulkUpdateModal(entry.courseName, entry.weekNumber, status);
-  }, longPressDelay);
+  // Only start long press for left click
+  if (event.button !== 0) return;
+  
+  // Set data attributes for the long press handler
+  const target = event.target as HTMLElement;
+  target.setAttribute('data-course-name', entry.courseName);
+  target.setAttribute('data-week-number', entry.weekNumber.toString());
+  target.setAttribute('data-status', status);
+  
+  onLongPressStart(event);
 };
 
-// Helper method to clear the long press timer
-const clearLongPressTimer = () => {
-  if (longPressTimer) {
-    clearTimeout(longPressTimer);
-    longPressTimer = null;
-  }
+const onStatusButtonMouseUp = () => {
+  onLongPressEnd();
+};
+
+const onStatusButtonMouseLeave = () => {
+  onLongPressCancel();
 };
 
 // Open the bulk update confirmation modal
