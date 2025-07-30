@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
-  modules: ["@nuxtjs/tailwindcss", "@nuxtjs/color-mode"],
+  modules: ["@nuxtjs/tailwindcss", "@nuxtjs/color-mode", "@vite-pwa/nuxt"],
   css: ["~/assets/css/main.css"],
   colorMode: {
     preference: "system", // default theme
@@ -29,8 +29,17 @@ export default defineNuxtConfig({
           key: "description-tr",
           content: "Üniversite ders devamsızlığınızı kolayca takip edin",
         },
+        // PWA meta tags
+        { name: "theme-color", content: "#3b82f6" },
+        { name: "mobile-web-app-capable", content: "yes" },
+        { name: "apple-mobile-web-app-title", content: "UnivTrack" },
+        { name: "apple-mobile-web-app-status-bar-style", content: "default" }
       ],
-      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+      link: [
+        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+        // PWA icons
+        { rel: "manifest", href: "/manifest.json" }
+      ],
       script: [
         {
           // Sayfa yüklenmeden önce tema rengini yükleyen script
@@ -111,4 +120,49 @@ export default defineNuxtConfig({
     // Private keys for server-side only
     firebaseServiceAccount: process.env.FIREBASE_SERVICE_ACCOUNT,
   },
+  // PWA configuration
+  pwa: {
+    registerType: 'autoUpdate',
+    manifest: {
+      name: 'UnivTrack - Üniversite Devamsızlık Takipçisi',
+      short_name: 'UnivTrack',
+      description: 'Üniversite ders devamsızlıklarınızı kolayca takip edin',
+      theme_color: '#3b82f6',
+      icons: [
+        {
+          src: 'pwa-icons/android-chrome-192x192.png',
+          sizes: '192x192',
+          type: 'image/png',
+          purpose: 'any maskable'
+        },
+        {
+          src: 'pwa-icons/android-chrome-512x512.png',
+          sizes: '512x512',
+          type: 'image/png'
+        },
+        {
+          src: 'pwa-icons/apple-touch-icon.png',
+          sizes: '180x180',
+          type: 'image/png'
+        }
+      ]
+    },
+    workbox: {
+      navigateFallback: '/',
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+    },
+    injectManifest: {
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+    },
+    client: {
+      installPrompt: true,
+      periodicSyncForUpdates: 20,
+    },
+    devOptions: {
+      enabled: true,
+      suppressWarnings: true,
+      navigateFallbackAllowlist: [/^\/$/],
+      type: 'module',
+    },
+  }
 });

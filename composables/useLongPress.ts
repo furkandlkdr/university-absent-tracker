@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref } from 'vue'
 
 export const useLongPress = (
   callback: Function,
@@ -9,9 +9,6 @@ export const useLongPress = (
 
   // Handle start of press
   const start = (event: Event) => {
-    // Save the target element
-    const targetElement = event.target as HTMLElement
-    
     // Clear any existing timer
     if (timer) {
       clearTimeout(timer)
