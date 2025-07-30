@@ -80,24 +80,12 @@ export const useDatabase = () => {
   // Terms Collection
   const termsRef = collection(db, 'terms')
   
-  // Cache for terms data
-  let termsCache: Term[] | null = null;
-  let termsCacheTime: number | null = null;
-  const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-  
-  // Get all terms for current user with caching
+  // Get all terms for current user
   const getTerms = async (retryCount = 0, maxRetries = 3) => {
     const userId = getUserId();
     if (!userId) {
       console.log('No user is logged in')
       return []
-    }
-    
-    // Check if we have valid cache
-    const now = Date.now();
-    if (termsCache && termsCacheTime && (now - termsCacheTime < CACHE_DURATION)) {
-      console.log('Returning cached terms data')
-      return termsCache;
     }
     
     try {
@@ -110,15 +98,9 @@ export const useDatabase = () => {
       
       const querySnapshot = await getDocs(q)
       console.log(`Found ${querySnapshot.docs.length} terms`)
-      const terms = querySnapshot.docs.map(doc => {
+      return querySnapshot.docs.map(doc => {
         return { id: doc.id, ...doc.data() } as Term
       })
-      
-      // Update cache
-      termsCache = terms;
-      termsCacheTime = now;
-      
-      return terms;
     } catch (error) {
       console.error('Error getting terms:', error)
       
