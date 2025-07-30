@@ -21,6 +21,7 @@ This application provides a simple interface for users to define their academic 
 * **Read-Only Completed Terms:** Terms automatically become read-only when all weeks have passed, preserving historical data.
 * **Mobile-First Design:** Responsive interface optimized for mobile devices.
 * **Theme Customization:** Choose your preferred color scheme (light, dark, or system) and customize the theme color with an interactive color picker.
+* **Progressive Web App (PWA) Support:** Install the app on your device for a native app-like experience with offline capabilities.
 
 ## How It Works
 
