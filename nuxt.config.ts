@@ -108,5 +108,7 @@ export default defineNuxtConfig({
       firebaseMessagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
       firebaseAppId: process.env.FIREBASE_APP_ID,
     },
+    // Private keys for server-side only
+    firebaseServiceAccount: process.env.FIREBASE_SERVICE_ACCOUNT,
   },
 });

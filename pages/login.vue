@@ -30,6 +30,11 @@
             {{ error }}
           </div>
 
+          <div v-if="successMessage"
+            class="bg-green-100 dark:bg-green-900 border border-green-400 text-green-700 dark:text-green-300 px-4 py-2 rounded-md mt-4">
+            {{ successMessage }}
+          </div>
+
           <button type="submit"
             class="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-md disabled:opacity-50"
             :disabled="loading">
@@ -82,6 +87,7 @@ const email = ref('')
 const password = ref('')
 const loading = ref(false)
 const error = ref('')
+const successMessage = ref('')
 
 const handleLogin = async () => {
   error.value = ''

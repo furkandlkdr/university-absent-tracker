@@ -54,6 +54,16 @@ export const useAuth = () => {
   const login = async (email: string, password: string) => {
     if (!auth.value) return { user: null, error: 'Firebase Auth not initialized' };
     try {
+      // Email format validation
+      if (!email || !email.includes('@')) {
+        return { user: null, error: 'Geçerli bir e-posta adresi girin' };
+      }
+      
+      // Password length validation
+      if (!password || password.length < 6) {
+        return { user: null, error: 'Şifre en az 6 karakter olmalıdır' };
+      }
+      
       const userCredential = await signInWithEmailAndPassword(
         auth.value,
         email,
@@ -61,7 +71,28 @@ export const useAuth = () => {
       );
       return { user: userCredential.user, error: null };
     } catch (error: any) {
-      return { user: null, error: error.message };
+      console.error('Login error:', error);
+      let errorMessage = 'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.';
+      
+      // Firebase error codes handling
+      switch (error.code) {
+        case 'auth/user-not-found':
+          errorMessage = 'Bu e-posta ile kayıtlı kullanıcı bulunamadı.';
+          break;
+        case 'auth/wrong-password':
+          errorMessage = 'Şifre yanlış. Lütfen tekrar deneyin.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Çok fazla başarısız giriş denemesi. Lütfen daha sonra tekrar deneyin.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Geçersiz e-posta formatı.';
+          break;
+        default:
+          errorMessage = error.message || errorMessage;
+      }
+      
+      return { user: null, error: errorMessage };
     }
   };
 

@@ -80,12 +80,24 @@ export const useDatabase = () => {
   // Terms Collection
   const termsRef = collection(db, 'terms')
   
-  // Get all terms for current user
+  // Cache for terms data
+  let termsCache: Term[] | null = null;
+  let termsCacheTime: number | null = null;
+  const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+  
+  // Get all terms for current user with caching
   const getTerms = async (retryCount = 0, maxRetries = 3) => {
     const userId = getUserId();
     if (!userId) {
       console.log('No user is logged in')
       return []
+    }
+    
+    // Check if we have valid cache
+    const now = Date.now();
+    if (termsCache && termsCacheTime && (now - termsCacheTime < CACHE_DURATION)) {
+      console.log('Returning cached terms data')
+      return termsCache;
     }
     
     try {
@@ -98,9 +110,15 @@ export const useDatabase = () => {
       
       const querySnapshot = await getDocs(q)
       console.log(`Found ${querySnapshot.docs.length} terms`)
-      return querySnapshot.docs.map(doc => {
+      const terms = querySnapshot.docs.map(doc => {
         return { id: doc.id, ...doc.data() } as Term
       })
+      
+      // Update cache
+      termsCache = terms;
+      termsCacheTime = now;
+      
+      return terms;
     } catch (error) {
       console.error('Error getting terms:', error)
       
@@ -223,10 +241,21 @@ export const useDatabase = () => {
     }
   }
   
-  // Add or update attendance record with better error handling
+  // Add or update attendance record with better error handling and validation
   const updateAttendanceStatus = async (record: Omit<AttendanceRecord, 'id' | 'userId'>) => {
     const userId = getUserId();
     if (!userId) return { success: false, error: 'User not authenticated' }
+    
+    // Validate input
+    if (!record.termId || !record.courseName || !record.date || !record.status) {
+      return { success: false, error: 'Eksik bilgi. Lütfen tüm alanları doldurun.' }
+    }
+    
+    // Validate status
+    const validStatuses = ['Gittim', 'Gitmedim', 'Tatil / Ders Yok'];
+    if (!validStatuses.includes(record.status)) {
+      return { success: false, error: 'Geçersiz durum değeri.' }
+    }
     
     try {
       // Check if record exists
@@ -255,7 +284,16 @@ export const useDatabase = () => {
       return { success: true, error: null }
     } catch (error: any) {
       console.error('Attendance status update error:', error)
-      return { success: false, error: error.message || 'Failed to update attendance status' }
+      let errorMessage = 'Devamsızlık durumu güncellenirken bir hata oluştu.';
+      
+      // Firebase error codes handling
+      if (error.code === 'permission-denied') {
+        errorMessage = 'Bu işlemi yapma izniniz yok. Lütfen tekrar giriş yapın.';
+      } else if (error.code === 'not-found') {
+        errorMessage = 'Kayıt bulunamadı.';
+      }
+      
+      return { success: false, error: errorMessage }
     }
   }
     // Bulk update attendance records

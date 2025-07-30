@@ -5,19 +5,14 @@ import { getFirestore, enableIndexedDbPersistence, connectFirestoreEmulator, CAC
 export default defineNuxtPlugin((nuxtApp) => {
   const runtimeConfig = useRuntimeConfig()
   
-  // Her değer için string türünü garantileyen helper fonksiyon
-  const getConfigValue = (value: string | undefined, fallback: string): string => {
-    return value || fallback;
-  }
-  
+  // Sadece gerekli olan yapılandırma değerlerini al
   const config = {
-    // String türü garantili yapılandırma değerleri
-    apiKey: runtimeConfig.public?.firebaseApiKey || import.meta.env?.FIREBASE_API_KEY,
-    authDomain: runtimeConfig.public?.firebaseAuthDomain || import.meta.env?.FIREBASE_AUTH_DOMAIN,
-    projectId: runtimeConfig.public?.firebaseProjectId || import.meta.env?.FIREBASE_PROJECT_ID,
-    storageBucket: runtimeConfig.public?.firebaseStorageBucket || import.meta.env?.FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: runtimeConfig.public?.firebaseMessagingSenderId || import.meta.env?.FIREBASE_MESSAGING_SENDER_ID,
-    appId: runtimeConfig.public?.firebaseAppId || import.meta.env?.FIREBASE_APP_ID
+    apiKey: runtimeConfig.public.firebaseApiKey,
+    authDomain: runtimeConfig.public.firebaseAuthDomain,
+    projectId: runtimeConfig.public.firebaseProjectId,
+    storageBucket: runtimeConfig.public.firebaseStorageBucket,
+    messagingSenderId: runtimeConfig.public.firebaseMessagingSenderId,
+    appId: runtimeConfig.public.firebaseAppId
   }
 
   // Firebase örneklerini oluşturma işlemini try-catch bloğu içine alalım
