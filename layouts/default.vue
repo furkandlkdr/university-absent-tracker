@@ -2,6 +2,7 @@
   <div class="flex flex-col min-h-screen">
     <header class="bg-surface-light dark:bg-surface-dark shadow dark-mode-transition">
       <nav class="container mx-auto px-4 py-4 flex items-center justify-between">
+        <Analytics />
         <NuxtLink to="/" class="text-xl font-bold text-primary-600 dark:text-primary-400 dark-mode-transition focus:outline-none focus:ring-2 focus:ring-primary-500 rounded">
           UnivTrack
         </NuxtLink>
@@ -74,6 +75,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { Analytics } from '@vercel/analytics/nuxt'
 import { getAuth, signOut } from 'firebase/auth'
 import { onClickOutside } from '@vueuse/core'
 
