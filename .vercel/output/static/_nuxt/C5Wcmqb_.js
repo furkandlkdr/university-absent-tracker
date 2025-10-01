@@ -1,0 +1,1 @@
+import{Q as t,j as s,R as r}from"./ZMz7U622.js";const p=t((a,o)=>{const{isLoggedIn:e}=s();if(!e.value&&a.path!=="/"&&a.path!=="/login"&&a.path!=="/register"&&a.path!=="/forgot-password")return r("/login");if(e.value&&(a.path==="/login"||a.path==="/register"||a.path==="/forgot-password"))return r("/dashboard")});export{p as default};

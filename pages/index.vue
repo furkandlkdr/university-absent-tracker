@@ -1,6 +1,17 @@
 <template>
   <div class="flex flex-col items-center justify-center py-10">
-    <div class="w-full max-w-4xl">
+    <!-- Loading state while auth is initializing -->
+    <div v-if="!authInitialized" class="w-full max-w-4xl text-center">
+      <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
+        <div class="flex flex-col items-center justify-center space-y-4">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          <p class="text-lg text-gray-600 dark:text-gray-400">Yükleniyor...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content - only shown when auth is initialized and user is not logged in -->
+    <div v-else class="w-full max-w-4xl">
       <div class="text-center mb-10">
         <h1 class="text-3xl md:text-4xl font-bold text-primary-600 dark:text-primary-400 mb-4">
           UnivTrack | Devamsızlık Takip Uygulaması
@@ -90,12 +101,15 @@
 </template>
 
 <script setup lang="ts">
-const { isLoggedIn } = useAuth()
+const { isLoggedIn, authInitialized } = useAuth()
+const router = useRouter()
 
-// If user is already logged in, redirect to dashboard
+// Wait for auth to initialize, then redirect if user is logged in
 onMounted(() => {
-  if (isLoggedIn.value) {
-    navigateTo('/dashboard')
-  }
+  watchEffect(() => {
+    if (authInitialized.value && isLoggedIn.value) {
+      router.push('/dashboard')
+    }
+  })
 })
 </script>
