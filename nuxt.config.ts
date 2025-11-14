@@ -128,6 +128,7 @@ export default defineNuxtConfig({
       short_name: 'UnivTrack',
       description: 'Üniversite ders devamsızlıklarınızı kolayca takip edin',
       theme_color: '#3b82f6',
+      orientation: 'portrait',
       icons: [
         {
           src: 'pwa-icons/android-chrome-192x192.png',
