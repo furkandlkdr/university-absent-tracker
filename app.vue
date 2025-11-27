@@ -11,6 +11,13 @@ const { user, isLoggedIn } = useAuth()
 
 const colorMode = useColorMode()
 
+// Ekran yönünü portre modunda kilitle (mobil cihazlar için)
+const { lockToPortrait } = useScreenOrientation()
+
+onMounted(async () => {
+  await lockToPortrait()
+})
+
 // Tema yönetimi değişkenleri
 const currentHue = useState<number>('theme-hue', () => {
   // Başlangıçta localStorage'dan değeri almaya çalış (varsayılan: 240)
