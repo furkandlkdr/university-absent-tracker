@@ -72,6 +72,7 @@
 
 <script setup lang="ts">
 const { isLoggedIn, login, authInitialized } = useAuth()
+const { getTerms } = useDatabase()
 const router = useRouter()
 
 // Kullanıcı zaten giriş yapmışsa dashboard'a yönlendir
@@ -99,7 +100,16 @@ const handleLogin = async () => {
     if (result.error) {
       error.value = 'Giriş başarısız. Lütfen e-posta ve şifrenizi kontrol edin.'
     } else {
-      // Başarılı girişten sonra dashboard'a yönlendir
+      // Başarılı girişten sonra, kullanıcının tüm dönemlerinin read-only durumunu kontrol et
+      // Bu işlem arka planda çalışır ve kullanıcı deneyimini etkilemez
+      try {
+        await getTerms() // This will automatically check and update read-only status for all terms
+      } catch (e) {
+        console.error('Error checking term statuses after login:', e)
+        // Sessizce hata ver - kullanıcı girişini etkilemesin
+      }
+      
+      // Dashboard'a yönlendir
       router.push('/dashboard')
     }
   } catch (e: any) {

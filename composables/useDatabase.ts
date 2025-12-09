@@ -45,7 +45,8 @@ export const useDatabase = () => {
       updateAttendanceStatus: async () => ({ success: false, error: 'Server-side rendering' }),
       bulkUpdateAttendance: async () => ({ success: false, updatedCount: 0, error: 'Server-side rendering' }),
       getTermStatistics: () => [],
-      generateTermCalendar: () => []
+      generateTermCalendar: () => [],
+      checkAndUpdateTermReadOnlyStatus: async () => ({}) as Term
     }
   }
 
@@ -73,7 +74,8 @@ export const useDatabase = () => {
       updateAttendanceStatus: async () => ({ success: false, error: 'Firestore not initialized' }),
       bulkUpdateAttendance: async () => ({ success: false, updatedCount: 0, error: 'Firestore not initialized' }),
       getTermStatistics: () => [],
-      generateTermCalendar: () => []
+      generateTermCalendar: () => [],
+      checkAndUpdateTermReadOnlyStatus: async () => ({}) as Term
     }
   }
 
@@ -98,9 +100,18 @@ export const useDatabase = () => {
       
       const querySnapshot = await getDocs(q)
       console.log(`Found ${querySnapshot.docs.length} terms`)
-      return querySnapshot.docs.map(doc => {
-        return { id: doc.id, ...doc.data() } as Term
-      })
+      
+      // Check and update read-only status for all terms
+      const terms = await Promise.all(
+        querySnapshot.docs.map(async (doc) => {
+          let term = { id: doc.id, ...doc.data() } as Term
+          // Always check and update read-only status when fetching terms
+          term = await checkAndUpdateTermReadOnlyStatus(term)
+          return term
+        })
+      )
+      
+      return terms
     } catch (error) {
       console.error('Error getting terms:', error)
       
@@ -116,12 +127,38 @@ export const useDatabase = () => {
     }
   }
   
+  // Check and update term read-only status based on current date
+  const checkAndUpdateTermReadOnlyStatus = async (term: Term): Promise<Term> => {
+    const startDate = parseISO(term.startDate)
+    const currentDate = new Date()
+    const weekCount = term.weekCount || 14
+    const endDate = addWeeks(startDate, weekCount)
+    
+    // Check if term should be read-only (end date has passed)
+    const shouldBeReadOnly = isBefore(endDate, currentDate)
+    
+    // If status has changed, update in database
+    if (term.isReadOnly !== shouldBeReadOnly && term.id) {
+      try {
+        await updateDoc(doc(db, 'terms', term.id), { isReadOnly: shouldBeReadOnly })
+        term.isReadOnly = shouldBeReadOnly
+      } catch (error) {
+        console.error('Error updating term read-only status:', error)
+      }
+    }
+    
+    return term
+  }
+
   // Get a specific term by ID
   const getTerm = async (termId: string) => {
     try {
       const termDoc = await getDoc(doc(db, 'terms', termId))
       if (termDoc.exists()) {
-        return { id: termDoc.id, ...termDoc.data() } as Term
+        let term = { id: termDoc.id, ...termDoc.data() } as Term
+        // Always check and update read-only status when fetching a term
+        term = await checkAndUpdateTermReadOnlyStatus(term)
+        return term
       }
       return null
     } catch (error) {
@@ -478,6 +515,7 @@ export const useDatabase = () => {
     updateAttendanceStatus,
     bulkUpdateAttendance,
     getTermStatistics,
-    generateTermCalendar
+    generateTermCalendar,
+    checkAndUpdateTermReadOnlyStatus
   }
 }

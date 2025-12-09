@@ -1,0 +1,4 @@
+const ThemeSelector_vue_vue_type_style_index_0_scoped_e2e81f43_lang = "input[type=range][data-v-e2e81f43]{-webkit-appearance:none;-moz-appearance:none;appearance:none;border-radius:12px;height:12px;margin:10px 0;overflow:hidden}input[type=range][data-v-e2e81f43]::-webkit-slider-thumb{-webkit-appearance:none;-moz-appearance:none;appearance:none;background:oklch(68% .19 var(--hue,240));border:2px solid #fff;border-radius:50%;box-shadow:0 0 3px #0006;cursor:pointer;height:22px;transform:translateY(0);width:22px}input[type=range][data-v-e2e81f43]::-moz-range-thumb{background:oklch(68% .19 var(--hue,240));border:2px solid #fff;border-radius:50%;box-shadow:0 0 3px #0006;cursor:pointer;height:22px;width:22px}";
+
+export { ThemeSelector_vue_vue_type_style_index_0_scoped_e2e81f43_lang as T };
+//# sourceMappingURL=ThemeSelector-styles-1.mjs.mjs.map
