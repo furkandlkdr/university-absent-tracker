@@ -7,7 +7,7 @@
     "lang": "tr",
     "theme_color": "#3b82f6",
     "description": "Üniversite ders devamsızlıklarınızı kolayca takip edin",
-    "orientation": "any",
+    "orientation": "portrait",
     "icons": [
         {
             "src": "/pwa-icons/android-chrome-192x192.png",
