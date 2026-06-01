@@ -25,14 +25,15 @@
       </div>
 
       <!-- Empty state -->
-      <div v-if="terms.length === 0" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
-        <p class="text-gray-600 dark:text-gray-400 mb-4">
-          Henüz hiç dönem eklemediniz.
-        </p>
-        <p class="text-gray-600 dark:text-gray-400">
-          Devamsızlık takibine başlamak için "Yeni Dönem Ekle" butonunu kullanın.
-        </p>
-      </div>
+      <OnboardingGuide
+        v-if="onboardingVisible"
+        :steps="onboardingSteps"
+        :visible="onboardingVisible"
+        @create-term="handleCreateTerm"
+        @open-term="handleOpenTerm"
+        @log-attendance="handleLogAttendance"
+        @dismiss="handleDismiss"
+      />
 
       <!-- Terms grid -->
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -317,15 +318,22 @@ import { format, parseISO } from 'date-fns'
 import type { Term } from '~/composables/useDatabase'
 import { useDatabase } from '~/composables/useDatabase'
 import { useAuth } from '~/composables/useAuth'
+import OnboardingGuide from '~/components/OnboardingGuide.vue'
+import { computed } from 'vue'
 
 const { user, isLoggedIn, authInitialized } = useAuth()
-const { getTerms, getTerm, addTerm, updateTerm, deleteTerm: deleteTermFunc } = useDatabase()
+const { getTerms, getTerm, addTerm, updateTerm, deleteTerm: deleteTermFunc, getAttendanceRecords } = useDatabase()
 const router = useRouter()
 const route = useRoute()
 
 // Term list
 const loading = ref(true)
 const terms = ref<Term[]>([])
+const attendanceCount = ref(0)
+const onboardingDismissed = ref(false)
+
+const primaryTerm = computed(() => terms.value.length > 0 ? terms.value[0] : null)
+const onboardingVisible = computed(() => !onboardingDismissed.value && terms.value.length === 0)
 
 // Term form
 const showNewTermModal = ref(false)
@@ -362,6 +370,9 @@ const days = [
 
 // Fetch terms and check for query parameters when component mounts
 onMounted(async () => {
+  // Initialize onboarding dismissal from localStorage and fetch terms when ready
+  try { onboardingDismissed.value = localStorage.getItem('onboardingDismissed') === '1' } catch (e) {}
+
   // Kimlik doğrulaması tamamlandığında ve kullanıcı oturum açtıysa dönemleri getir
   const unwatch = watchEffect(async () => {
     if (authInitialized.value && isLoggedIn.value) {
@@ -435,6 +446,17 @@ const fetchTerms = async (retryCount = 0, maxRetries = 3) => {
   try {
     terms.value = await getTerms()
     console.log('Fetched terms:', terms.value)
+    // If we have at least one term, fetch attendance records for primary term to drive onboarding progress
+    if (terms.value.length > 0) {
+      try {
+        const records = await getAttendanceRecords(terms.value[0].id!)
+        attendanceCount.value = records.length
+      } catch (e) {
+        attendanceCount.value = 0
+      }
+    } else {
+      attendanceCount.value = 0
+    }
   } catch (error) {
     console.error('Error fetching terms:', error)
 
@@ -693,6 +715,43 @@ const decrementWeekCount = () => {
 const weekCountError = ref(false)
 const validateWeekCount = () => {
   weekCountError.value = termForm.value.weekCount < 5 || termForm.value.weekCount > 18
+}
+
+// Onboarding helpers
+const onboardingSteps = computed(() => {
+  const step1Completed = terms.value.length > 0
+  const step2Completed = step1Completed && !!(terms.value[0].weekCount || terms.value[0].weekCount === 0)
+  const step3Completed = step1Completed && getTotalCourses(terms.value[0]) > 0
+  const step4Completed = step1Completed && attendanceCount.value > 0
+
+  return [
+    { id: 1, title: 'Döneminizi Oluşturun', description: 'Dönem adı ve başlangıç tarihini girin.', completed: step1Completed, event: 'create-term', cta: 'Dönem Ekle' },
+    { id: 2, title: 'Hafta Yapısını Ayarlayın', description: 'Dönem uzunluğunu (hafta) belirleyin.', completed: step2Completed, event: 'create-term', cta: 'Yapılandır' },
+    { id: 3, title: 'Derslerinizi Ekleyin', description: 'Ders adlarını haftalık programa ekleyin.', completed: step3Completed, event: 'create-term', cta: 'Ders Ekle' },
+    { id: 4, title: 'İlk Devam Kaydınızı Girin', description: 'Bir ders için ilk "Gittim / Gitmedim" kaydını oluşturun.', completed: step4Completed, event: 'log-attendance', cta: null, hideCta: true }
+  ]
+})
+
+const handleCreateTerm = () => {
+  showNewTermModal.value = true
+}
+
+const handleOpenTerm = (payload?: any) => {
+  if (primaryTerm.value?.id) viewTerm(primaryTerm.value.id)
+}
+
+const handleLogAttendance = (payload?: any) => {
+  if (primaryTerm.value?.id) router.push(`/terms/${primaryTerm.value.id}`)
+}
+
+const handleDismiss = () => {
+  onboardingDismissed.value = true
+  try { localStorage.setItem('onboardingDismissed', '1') } catch (e) {}
+}
+
+const handleHelp = () => {
+  // Navigate to docs or show contextual help — for now open first term if exists
+  if (primaryTerm.value?.id) router.push(`/terms/${primaryTerm.value.id}`)
 }
 
 // Add morning slot
