@@ -1,7 +1,7 @@
 <template>
 	<div class="theme-selector bg-surface-light dark:bg-surface-dark rounded-lg shadow-lg p-4 w-full max-w-xs dark-mode-transition">
 		<div class="mb-4 border-b border-gray-200 dark:border-gray-700 pb-3">
-			<h3 class="text-md font-medium text-gray-800 dark:text-gray-200">Theme Color</h3>
+			<h3 class="text-md font-medium text-gray-800 dark:text-gray-200">{{ t('theme.title') }}</h3>
 
 			<!-- Color Slider -->
 			<div class="mt-3">
@@ -44,40 +44,40 @@
 
 		<!-- Color Mode Selection -->
 		<div>
-			<h3 class="text-md font-medium mb-3 text-gray-800 dark:text-gray-200">Color Mode</h3>
+			<h3 class="text-md font-medium mb-3 text-gray-800 dark:text-gray-200">{{ t('theme.colorMode') }}</h3>
 			<div class="flex items-center space-x-2">
 				<button @click="setColorMode('light')" :class="[
 					'px-3 py-1 rounded-md text-sm flex items-center justify-center dark-mode-transition',
 					colorMode.preference === 'light' ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-				]" aria-label="Light mode">
+				]" :aria-label="t('theme.light')">
 					<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
 						stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
 							d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
 					</svg>
-					Light
+					{{ t('theme.light') }}
 				</button>
 				<button @click="setColorMode('dark')" :class="[
 					'px-3 py-1 rounded-md text-sm flex items-center justify-center dark-mode-transition',
 					colorMode.preference === 'dark' ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-				]" aria-label="Dark mode">
+				]" :aria-label="t('theme.dark')">
 					<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
 						stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
 							d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
 					</svg>
-					Dark
+					{{ t('theme.dark') }}
 				</button>
 				<button @click="setColorMode('system')" :class="[
 					'px-3 py-1 rounded-md text-sm flex items-center justify-center dark-mode-transition',
 					colorMode.preference === 'system' ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-				]" aria-label="System mode">
+				]" :aria-label="t('theme.system')">
 					<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
 						stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
 							d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
 					</svg>
-					System
+					{{ t('theme.system') }}
 				</button>
 			</div>
 		</div>
@@ -85,6 +85,7 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
 const colorMode = useColorMode()
 
 // Renk tonu

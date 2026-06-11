@@ -8,10 +8,10 @@
     <!-- Term not found -->
     <div v-else-if="!term" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
       <p class="text-gray-600 dark:text-gray-400 mb-6">
-        Dönem bulunamadı veya erişim izniniz yok.
+        {{ t('term.notFound') }}
       </p>
       <NuxtLink to="/dashboard" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md">
-        Dönemlerim'e Dön
+        {{ t('term.backToTerms') }}
       </NuxtLink>
     </div>
 
@@ -21,7 +21,7 @@
         <div>
           <h1 class="text-2xl font-bold">{{ term.name }}</h1>
           <p class="text-gray-600 dark:text-gray-400">
-            <span>Başlangıç Tarihi: {{ formatDate(term.startDate) }}</span>
+            <span>{{ t('dashboard.term.startDate') }}: {{ formatDate(term.startDate) }}</span>
           </p>
         </div>
 
@@ -34,7 +34,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
             </span>
-            Dönemlerim'e Dön
+            {{ t('term.backToTerms') }}
           </NuxtLink>
 
           <button v-if="!term.isReadOnly" @click="openTermEditModal"
@@ -46,7 +46,7 @@
                   d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
             </span>
-            Dönemi Düzenle
+            {{ t('term.editTerm') }}
           </button>
         </div>
       </div>
@@ -55,28 +55,28 @@
       <div class="space-y-6">
         <!-- Calendar Legend -->
         <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-          <h3 class="text-sm font-medium mb-2">Devamsızlık Durumu</h3>
+          <h3 class="text-sm font-medium mb-2">{{ t('term.legend.title') }}</h3>
           <div class="flex flex-wrap gap-3">
             <div class="flex items-center">
               <span class="w-4 h-4 bg-green-500 rounded-full mr-2"></span>
-              <span class="text-sm">Gittim</span>
+              <span class="text-sm">{{ t('term.legend.attended') }}</span>
             </div>
             <div class="flex items-center">
               <span class="w-4 h-4 bg-red-500 rounded-full mr-2"></span>
-              <span class="text-sm">Gitmedim</span>
+              <span class="text-sm">{{ t('term.legend.absent') }}</span>
             </div>
             <div class="flex items-center">
               <span class="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded-full mr-2"></span>
-              <span class="text-sm">Tatil / Ders Yok</span>
+              <span class="text-sm">{{ t('term.legend.holiday') }}</span>
             </div>
             <div class="flex items-center">
               <span
                 class="w-4 h-4 bg-white border border-dashed border-gray-300 dark:border-gray-600 rounded-full mr-2"></span>
-              <span class="text-sm">İşaretlenmedi</span>
+              <span class="text-sm">{{ t('term.legend.unmarked') }}</span>
             </div>
             <div class="flex items-center">
               <span class="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full mr-2"></span>
-              <span class="text-sm">Ders henüz başlamamış</span>
+              <span class="text-sm">{{ t('term.legend.notStarted') }}</span>
             </div>
           </div>
         </div>        <!-- New Tip/Hint for bulk update -->
@@ -86,9 +86,7 @@
               <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1v-3a1 1 0 00-1-1z" clip-rule="evenodd" />
             </svg>
           </div>
-          <div class="ml-2">
-            <strong>Toplu Devamsızlık Güncelleme!</strong> Bir duruma (Gittim/Gitmedim/Tatil) <strong>uzun basarak</strong>, ilgili dersin önceki haftalarını topluca güncelleyebilirsiniz. İşaretlenmemiş haftalar için otomatik olarak yeni kayıtlar oluşturulur, var olan kayıtlar ise güncellenir (tatiller korunur).
-          </div>
+          <div class="ml-2" v-html="t('term.bulkUpdateHint')"></div>
         </div>
 
         <!-- Week Navigation -->
@@ -107,7 +105,7 @@
             <div class="relative mx-4">
               <button @click="weekDropdownOpen = !weekDropdownOpen"
                 class="bg-primary-50 dark:bg-primary-900 text-primary-600 dark:text-primary-300 px-4 py-2 rounded-md font-medium flex items-center">
-                {{ selectedWeek }}. Hafta - {{ formatWeekRange(selectedWeek) }}
+                {{ t('term.weekLabel', { num: selectedWeek, range: formatWeekRange(selectedWeek) }) }}
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -121,7 +119,7 @@
                 <button v-for="weekNum in totalWeeks" :key="weekNum" @click="selectWeek(weekNum)"
                   class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                   :class="weekNum === selectedWeek ? 'bg-primary-50 dark:bg-primary-900 text-primary-600 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300'">
-                  {{ weekNum }}. Hafta - {{ formatWeekRange(weekNum) }}
+                  {{ t('term.weekLabel', { num: weekNum, range: formatWeekRange(weekNum) }) }}
                 </button>
               </div>
             </div>
@@ -157,32 +155,32 @@
                     <div>
                       <div v-if="!entry.isPast"
                         class="bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-sm px-3 py-1 rounded-md inline-block">
-                        Gelecek Tarihi
+                        {{ t('term.futureDate') }}
                       </div>
                       <div v-else-if="term.isReadOnly && !getAttendanceStatus(entry)"
                         class="bg-white border border-dashed border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 text-sm px-3 py-1 rounded-md inline-block">
-                        İşaretlenmedi
+                        {{ t('term.legend.unmarked') }}
                       </div>
                       <div v-else class="flex space-x-2">
                         <button 
-                          v-for="status in ['Gittim', 'Gitmedim', 'Tatil / Ders Yok']" 
-                          :key="status" 
+                          v-for="statusKey in ATTENDANCE_STATUSES"
+                          :key="statusKey"
                           :class="[
                             'text-sm px-3 py-1 rounded-md select-none',
-                            getAttendanceStatus(entry) === status ? getStatusButtonClass(status, true) : getStatusButtonClass(status, false),
+                            getAttendanceStatus(entry) === statusKey ? getStatusButtonClass(statusKey, true) : getStatusButtonClass(statusKey, false),
                             term.isReadOnly ? 'cursor-not-allowed opacity-75' : 'cursor-pointer hover:opacity-90'
-                          ]" 
-                          :disabled="term.isReadOnly" 
-                          @touchstart="!term.isReadOnly && onStatusButtonTouchStart($event, entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')"
+                          ]"
+                          :disabled="term.isReadOnly"
+                          @touchstart="!term.isReadOnly && onStatusButtonTouchStart($event, entry, statusKey)"
                           @touchend="onStatusButtonTouchEnd"
                           @touchmove="onStatusButtonTouchMove"
                           @touchcancel="onStatusButtonTouchEnd"
-                          @mousedown="!term.isReadOnly && onStatusButtonMouseDown($event, entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')"
+                          @mousedown="!term.isReadOnly && onStatusButtonMouseDown($event, entry, statusKey)"
                           @mouseup="onStatusButtonMouseUp"
                           @mouseleave="onStatusButtonMouseLeave"
-                          @click="!term.isReadOnly && updateAttendance(entry, status as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok')"
+                          @click="!term.isReadOnly && updateAttendance(entry, statusKey)"
                           onselectstart="return false">
-                          {{ status }}
+                          {{ statusLabel(statusKey) }}
                         </button>
                       </div>
                     </div>
@@ -194,12 +192,12 @@
         </div>
 
         <div v-else class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
-          <p class="text-gray-600 dark:text-gray-400">Bu haftada ders bulunmamaktadır.</p>
+          <p class="text-gray-600 dark:text-gray-400">{{ t('term.noClassesThisWeek') }}</p>
         </div>
 
         <!-- Statistics Section (moved here from the tab) -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h3 class="text-lg font-medium mb-4">Devamsızlık Özeti</h3>
+          <h3 class="text-lg font-medium mb-4">{{ t('term.summaryTitle') }}</h3>
 
           <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -207,11 +205,11 @@
                 <tr>
                   <th
                     class="px-6 py-3 bg-gray-50 dark:bg-gray-900 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Ders Adı
+                    {{ t('term.courseName') }}
                   </th>
                   <th
                     class="px-6 py-3 bg-gray-50 dark:bg-gray-900 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Devamsızlık Durumu
+                    {{ t('term.attendanceStatus') }}
                   </th>
                 </tr>
               </thead>
@@ -232,9 +230,7 @@
 
           <div v-if="hasRiskyAttendance"
             class="mt-6 p-3 bg-red-100 dark:bg-red-900 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-md">
-            <p class="text-sm">
-              <strong>Uyarı:</strong> Kırmızı renkli dersler devamsızlık limitine yaklaşıyor veya aşmış durumda.
-            </p>
+            <p class="text-sm" v-html="t('term.warningMessage')"></p>
           </div>
         </div>
       </div>
@@ -253,27 +249,24 @@
         </button>
         
         <div class="p-5 border-b border-gray-200 dark:border-gray-700">
-          <h3 class="text-lg font-semibold">Toplu Güncelleme</h3>
+          <h3 class="text-lg font-semibold">{{ t('term.bulkUpdate.title') }}</h3>
         </div>        <div class="p-5">
-          <p class="mb-4 text-gray-700 dark:text-gray-300">
-            <strong>{{ bulkUpdateData.courseName }}</strong> dersinin ilk <strong>{{ bulkUpdateData.targetWeek }}</strong> haftasına ait
-            devam durumlarını (tatiller hariç) '<strong>{{ bulkUpdateData.newStatus }}</strong>' olarak güncellemek istediğinize emin misiniz?
-          </p>
+          <p class="mb-4 text-gray-700 dark:text-gray-300" v-html="t('term.bulkUpdate.description', { course: bulkUpdateData.courseName, week: bulkUpdateData.targetWeek, status: statusLabel(bulkUpdateData.newStatus as AttendanceStatus) })"></p>
           <p class="text-sm text-blue-600 dark:text-blue-400 mb-4">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1v-3a1 1 0 00-1-1z" clip-rule="evenodd" />
             </svg>
-            Henüz işaretlenmemiş haftalar için otomatik olarak yeni kayıtlar oluşturulacaktır.
+            {{ t('term.bulkUpdate.info') }}
           </p>
           
           <div class="flex justify-end space-x-3 mt-6">
             <button @click="cancelBulkUpdate"
               class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700">
-              İptal
+              {{ t('common.cancel') }}
             </button>
             <button @click="confirmBulkUpdate" :disabled="bulkUpdateLoading"
               class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md disabled:opacity-50">
-              {{ bulkUpdateLoading ? 'Güncelleniyor...' : 'Güncelle' }}
+              {{ bulkUpdateLoading ? t('term.bulkUpdate.updating') : t('term.bulkUpdate.update') }}
             </button>
           </div>
         </div>
@@ -298,10 +291,13 @@ import { onClickOutside } from '@vueuse/core'
 import type { Term, AttendanceRecord } from '~/composables/useDatabase'
 import { useDatabase } from '~/composables/useDatabase'
 import { useAuth } from '~/composables/useAuth'
+import type { AttendanceStatus } from '~/composables/useI18n'
+import { ATTENDANCE_STATUSES, toCanonicalStatus } from '~/composables/useI18n'
 
 const route = useRoute()
 const router = useRouter()
 const { isLoggedIn } = useAuth()
+const { t, statusLabel } = useI18n()
 const { getTerm, getAttendanceRecords, updateAttendanceStatus, bulkUpdateAttendance, getTermStatistics, generateTermCalendar } = useDatabase()
 
 // State
@@ -333,7 +329,7 @@ const bulkUpdateData = ref({
   termId: '',
   courseName: '',
   targetWeek: 0,
-  newStatus: '' as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok'
+  newStatus: '' as AttendanceStatus | ''
 });
 
 // Toast notification state
@@ -505,34 +501,35 @@ const calculateCurrentWeek = () => {
 
 // Get the human-readable label for a time slot
 const getTimeSlotLabel = (timeSlot: string) => {
-  const labels = {
-    'morning1': 'Öğleden Önce - 1. Slot',
-    'morning2': 'Öğleden Önce - 2. Slot',
-    'morningExtra1': 'Öğleden Önce - 3. Slot',
-    'morningExtra2': 'Öğleden Önce - 4. Slot',
-    'morningExtra3': 'Öğleden Önce - 5. Slot',
-    'afternoon1': 'Öğleden Sonra - 1. Slot',
-    'afternoon2': 'Öğleden Sonra - 2. Slot',
-    'afternoonExtra1': 'Öğleden Sonra - 3. Slot',
-    'afternoonExtra2': 'Öğleden Sonra - 4. Slot',
-    'afternoonExtra3': 'Öğleden Sonra - 5. Slot'
+  const labels: Record<string, string> = {
+    'morning1': t('term.timeSlot.morning1'),
+    'morning2': t('term.timeSlot.morning2'),
+    'morningExtra1': t('term.timeSlot.morningExtra1'),
+    'morningExtra2': t('term.timeSlot.morningExtra2'),
+    'morningExtra3': t('term.timeSlot.morningExtra3'),
+    'afternoon1': t('term.timeSlot.afternoon1'),
+    'afternoon2': t('term.timeSlot.afternoon2'),
+    'afternoonExtra1': t('term.timeSlot.afternoonExtra1'),
+    'afternoonExtra2': t('term.timeSlot.afternoonExtra2'),
+    'afternoonExtra3': t('term.timeSlot.afternoonExtra3'),
   }
 
-  return labels[timeSlot as keyof typeof labels] || timeSlot
+  return labels[timeSlot] || timeSlot
 }
 
-// Get attendance status for a calendar entry
-const getAttendanceStatus = (entry: any) => {
+// Get attendance status for a calendar entry (always returns the canonical key)
+const getAttendanceStatus = (entry: any): AttendanceStatus | null => {
   const record = attendanceRecords.value.find(r =>
     r.courseName === entry.courseName &&
     r.date === entry.date
   )
 
-  return record ? record.status : null
+  if (!record) return null
+  return toCanonicalStatus(record.status) as AttendanceStatus
 }
 
-// Update attendance status
-const updateAttendance = async (entry: any, status: 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok') => {
+// Update attendance status (canonical key in, canonical key out)
+const updateAttendance = async (entry: any, status: AttendanceStatus) => {
   if (!term.value || term.value.isReadOnly) return
 
   try {
@@ -556,17 +553,18 @@ const updateAttendance = async (entry: any, status: 'Gittim' | 'Gitmedim' | 'Tat
   }
 }
 
-// Get button styling based on attendance status
-const getStatusButtonClass = (status: string, isActive: boolean) => {
-  if (status === 'Gittim') {
+// Get button styling based on attendance status (canonical keys)
+const getStatusButtonClass = (status: AttendanceStatus, isActive: boolean) => {
+  if (status === 'attended') {
     return isActive
       ? 'bg-green-500 text-white'
       : 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300'
-  } else if (status === 'Gitmedim') {
+  } else if (status === 'absent') {
     return isActive
       ? 'bg-red-500 text-white'
       : 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300'
   } else {
+    // 'holiday'
     return isActive
       ? 'bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-200'
       : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
@@ -609,7 +607,7 @@ const { isLongPressing, onLongPressStart, onLongPressEnd, onLongPressCancel } = 
   if (button) {
     const courseName = button.getAttribute('data-course-name');
     const weekNumber = parseInt(button.getAttribute('data-week-number') || '0');
-    const status = button.getAttribute('data-status') as 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok';
+    const status = button.getAttribute('data-status') as AttendanceStatus | null;
     
     if (courseName && weekNumber && status) {
       openBulkUpdateModal(courseName, weekNumber, status);
@@ -618,7 +616,7 @@ const { isLongPressing, onLongPressStart, onLongPressEnd, onLongPressCancel } = 
 }, 600);
 
 // Long press event handlers for touch devices
-const onStatusButtonTouchStart = (event: TouchEvent, entry: any, status: 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok') => {
+const onStatusButtonTouchStart = (event: TouchEvent, entry: any, status: AttendanceStatus) => {
   // Only allow long press on past dates
   if (!entry.isPast || term.value?.isReadOnly) return;
   
@@ -641,7 +639,7 @@ const onStatusButtonTouchMove = () => {
 };
 
 // Long press event handlers for desktop/mouse devices
-const onStatusButtonMouseDown = (event: MouseEvent, entry: any, status: 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok') => {
+const onStatusButtonMouseDown = (event: MouseEvent, entry: any, status: AttendanceStatus) => {
   // Only allow long press on past dates
   if (!entry.isPast || term.value?.isReadOnly) return;
   
@@ -666,7 +664,7 @@ const onStatusButtonMouseLeave = () => {
 };
 
 // Open the bulk update confirmation modal
-const openBulkUpdateModal = (courseName: string, targetWeek: number, newStatus: 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok') => {
+const openBulkUpdateModal = (courseName: string, targetWeek: number, newStatus: AttendanceStatus) => {
   bulkUpdateData.value = {
     termId: termId.value,
     courseName,

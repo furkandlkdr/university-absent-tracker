@@ -1,0 +1,224 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "edit": "Edit",
+    "view": "View",
+    "close": "Close",
+    "back": "Back",
+    "dismiss": "Dismiss",
+    "language": "Language",
+    "changeLanguage": "Change language",
+    "english": "English",
+    "turkish": "Türkçe"
+  },
+  "nav": {
+    "myTerms": "My Terms",
+    "login": "Log in",
+    "register": "Sign up",
+    "logout": "Log out",
+    "themeSelector": "Theme picker"
+  },
+  "footer": {
+    "madeWith": "Made with ❤️ by",
+    "copyright": "© {year} UnivTrack"
+  },
+  "home": {
+    "title": "UnivTrack | Attendance Tracker App",
+    "subtitle": "A mobile-first web app designed to help students easily track their course attendance.",
+    "featuresTitle": "App Features",
+    "features": {
+      "createSchedule": "Easily create terms and course schedules",
+      "customLength": "Customizable term length (5-18 weeks)",
+      "mobileTracking": "Track your absences with a mobile-friendly interface",
+      "limitWarnings": "Automatic absence limit warnings (%70)",
+      "personalization": "Customizable theme colors and mode selection"
+    },
+    "getStartedTitle": "Get Started Now",
+    "getStartedDescription": "Sign up now to easily track your course attendance and start using the app.",
+    "signupNow": "Sign Up Now",
+    "haveAccount": "Already have an account?",
+    "loginHere": "Log in",
+    "noAccount": "Don't have an account?",
+    "registerHere": "Sign up"
+  },
+  "login": {
+    "title": "Log In",
+    "email": "Email",
+    "emailPlaceholder": "yourname@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "********",
+    "forgotPassword": "Forgot password?",
+    "submitting": "Logging in...",
+    "submit": "Log In",
+    "error": "Login failed. Please check your email and password.",
+    "genericError": "An error occurred while logging in. Please try again.",
+    "warningTitle": "Important Notice: Please disable Ad blockers!",
+    "warningDescription": "Ad blockers may interfere with the Database connection."
+  },
+  "register": {
+    "title": "Create Account",
+    "email": "Email",
+    "emailPlaceholder": "yourname@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "At least 6 characters",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Re-enter your password",
+    "submitting": "Signing up...",
+    "submit": "Sign Up",
+    "passwordMismatch": "Passwords do not match.",
+    "error": "Sign up failed: {message}",
+    "genericError": "An error occurred during sign up. Please try again.",
+    "warningTitle": "Important Notice: Please disable Ad blockers!",
+    "warningDescription": "Ad blockers may interfere with the Database connection."
+  },
+  "forgotPassword": {
+    "title": "Reset Password",
+    "description": "Enter your email address to reset your password. We will send you a reset link.",
+    "email": "Email",
+    "emailPlaceholder": "yourname@example.com",
+    "submitting": "Sending...",
+    "submit": "Send Reset Link",
+    "successMessage": "A password reset link has been sent to your email. Please check your inbox.",
+    "error": "Password reset failed: {message}",
+    "genericError": "An error occurred while resetting the password. Please try again.",
+    "backToLogin": "Back to login"
+  },
+  "dashboard": {
+    "title": "My Terms",
+    "addNewTerm": "Add New Term",
+    "term": {
+      "name": "Term Name",
+      "namePlaceholder": "e.g., 2025 Spring",
+      "startDate": "Start Date",
+      "weekCount": "Term Length (Weeks)",
+      "weekCountHint": "Term length can be between 5 and 18 weeks (default: 14 weeks)",
+      "week": "week",
+      "courseCount": "{count} course | {count} courses",
+      "edit": "Edit Term",
+      "editButton": "Edit",
+      "delete": "Delete Term",
+      "deleteConfirm": "Are you sure you want to delete the <strong>{name}</strong> term? This action cannot be undone and all attendance records will be deleted.",
+      "deleteConfirmYes": "Yes, Delete",
+      "completed": "Completed",
+      "active": "Active"
+    },
+    "schedule": {
+      "title": "Weekly Class Schedule",
+      "morning": "Morning",
+      "afternoon": "Afternoon",
+      "addMorningSlot": "Add Morning Slot",
+      "addAfternoonSlot": "Add Afternoon Slot",
+      "coursePlaceholder": "Course name"
+    },
+    "form": {
+      "editTitle": "Edit Term",
+      "addTitle": "Add New Term",
+      "nameRequired": "Please enter the term name and start date.",
+      "uniqueCourseNames": "Each course name must be unique. Please do not use the same course name more than once.",
+      "atLeastOneCourse": "You must add at least one course."
+    },
+    "days": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday"
+    }
+  },
+  "onboarding": {
+    "title": "Set up from scratch in 4 steps",
+    "subtitle": "Prepare your first term, add your courses, and log your first attendance. You're in full control.",
+    "steps": {
+      "createTerm": {
+        "title": "Create Your Term",
+        "description": "Enter the term name and start date.",
+        "cta": "Add Term"
+      },
+      "configureWeeks": {
+        "title": "Set Up the Week Structure",
+        "description": "Define the term length (in weeks).",
+        "cta": "Configure"
+      },
+      "addCourses": {
+        "title": "Add Your Courses",
+        "description": "Add course names to your weekly schedule.",
+        "cta": "Add Courses"
+      },
+      "logAttendance": {
+        "title": "Log Your First Attendance",
+        "description": "Create your first \"Attended / Absent\" entry for a course."
+      }
+    },
+    "completed": "Completed",
+    "start": "Start"
+  },
+  "term": {
+    "notFound": "Term not found or you don't have access.",
+    "backToTerms": "Back to My Terms",
+    "editTerm": "Edit Term",
+    "bulkUpdate": {
+      "title": "Bulk Update",
+      "description": "Are you sure you want to update the attendance status of all previous weeks (excluding holidays) for the <strong>{course}</strong> course to '<strong>{status}</strong>'?",
+      "info": "New records will be created automatically for weeks that have not been marked yet.",
+      "updating": "Updating...",
+      "update": "Update"
+    },
+    "legend": {
+      "title": "Attendance Status",
+      "attended": "Attended",
+      "absent": "Absent",
+      "holiday": "Holiday / No Class",
+      "unmarked": "Unmarked",
+      "notStarted": "Course has not started yet"
+    },
+    "bulkUpdateHint": "<strong>Bulk Attendance Update!</strong> Long press on a status (Attended / Absent / Holiday) to bulk update previous weeks of the same course. New records are created automatically for unmarked weeks, while existing records are updated (holidays are preserved).",
+    "week": "Week",
+    "weekLabel": "Week {num} - {range}",
+    "futureDate": "Future Date",
+    "noClassesThisWeek": "There are no classes this week.",
+    "summaryTitle": "Attendance Summary",
+    "courseName": "Course Name",
+    "attendanceStatus": "Attendance Status",
+    "warningMessage": "<strong>Warning:</strong> Courses highlighted in red are at or over the absence limit.",
+    "status": {
+      "attended": "Attended",
+      "absent": "Absent",
+      "holiday": "Holiday / No Class"
+    },
+    "timeSlot": {
+      "morning1": "Morning - Slot 1",
+      "morning2": "Morning - Slot 2",
+      "morningExtra1": "Morning - Slot 3",
+      "morningExtra2": "Morning - Slot 4",
+      "morningExtra3": "Morning - Slot 5",
+      "afternoon1": "Afternoon - Slot 1",
+      "afternoon2": "Afternoon - Slot 2",
+      "afternoonExtra1": "Afternoon - Slot 3",
+      "afternoonExtra2": "Afternoon - Slot 4",
+      "afternoonExtra3": "Afternoon - Slot 5"
+    }
+  },
+  "language": {
+    "switcher": {
+      "selectLanguage": "Select language",
+      "english": "English",
+      "turkish": "Türkçe",
+      "currentLanguage": "Current language"
+    }
+  },
+  "theme": {
+    "title": "Theme Color",
+    "colorMode": "Color Mode",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again."
+  }
+}

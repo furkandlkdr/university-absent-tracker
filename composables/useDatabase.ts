@@ -4,6 +4,8 @@ import {
   type Firestore
 } from 'firebase/firestore'
 import { format, addWeeks, parseISO, differenceInWeeks, isBefore } from 'date-fns'
+import type { AttendanceStatus } from '~/composables/useI18n'
+import { toCanonicalStatus } from '~/composables/useI18n'
 
 // Define interfaces for our data types
 interface Course {
@@ -28,7 +30,7 @@ export interface AttendanceRecord {
   userId: string;
   courseName: string;
   date: string; // ISO format date string
-  status: 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok';
+  status: AttendanceStatus;
   weekNumber: number;
 }
 
@@ -206,7 +208,14 @@ export const useDatabase = () => {
       
       const querySnapshot = await getDocs(q)
       return querySnapshot.docs.map(doc => {
-        return { id: doc.id, ...doc.data() } as AttendanceRecord
+        const data = doc.data()
+        // Migrate legacy Turkish / mixed-locale status values to the
+        // canonical, locale-agnostic key.
+        return {
+          id: doc.id,
+          ...data,
+          status: toCanonicalStatus(data.status),
+        } as AttendanceRecord
       })
     } catch (error) {
       console.error('Error getting attendance records:', error)
@@ -230,13 +239,14 @@ export const useDatabase = () => {
     
     // Validate input
     if (!record.termId || !record.courseName || !record.date || !record.status) {
-      return { success: false, error: 'Eksik bilgi. Lütfen tüm alanları doldurun.' }
+      return { success: false, error: 'Missing information. Please fill in all fields.' }
     }
     
-    // Validate status
-    const validStatuses = ['Gittim', 'Gitmedim', 'Tatil / Ders Yok'];
-    if (!validStatuses.includes(record.status)) {
-      return { success: false, error: 'Geçersiz durum değeri.' }
+    // Normalize incoming status to canonical key, then validate.
+    const canonicalStatus = toCanonicalStatus(record.status) as AttendanceStatus
+    const validStatuses: AttendanceStatus[] = ['attended', 'absent', 'holiday']
+    if (!validStatuses.includes(canonicalStatus)) {
+      return { success: false, error: 'Invalid status value.' }
     }
     
     try {
@@ -254,11 +264,12 @@ export const useDatabase = () => {
       if (!querySnapshot.empty) {
         // Update existing record
         const docRef = doc(db, 'attendanceRecords', querySnapshot.docs[0].id)
-        await updateDoc(docRef, { status: record.status })
+        await updateDoc(docRef, { status: canonicalStatus })
       } else {
         // Add new record
         await addDoc(recordsRef, {
           ...record,
+          status: canonicalStatus,
           userId
         })
       }
@@ -283,16 +294,19 @@ export const useDatabase = () => {
     termId: string,
     courseName: string,
     targetWeek: number,
-    newStatus: 'Gittim' | 'Gitmedim' | 'Tatil / Ders Yok'
+    newStatus: AttendanceStatus | string
   ) => {
     const userId = getUserId();
     if (!userId) return { success: false, updatedCount: 0, createdCount: 0, error: 'User not authenticated' };
+    
+    // Normalize the requested status to the canonical key.
+    const canonicalNewStatus = toCanonicalStatus(newStatus) as AttendanceStatus
     
     try {
       // İlk olarak o dönemin takvimini almak için term'i getir
       const termDoc = await getTerm(termId);
       if (!termDoc) {
-        return { success: false, updatedCount: 0, createdCount: 0, error: 'Dönem bulunamadı' };
+        return { success: false, updatedCount: 0, createdCount: 0, error: 'Term not found' };
       }
       
       // Dönem takvimdeki tüm dersleri oluştur
@@ -326,7 +340,9 @@ export const useDatabase = () => {
       // Veritabanındaki kayıtları tarih bazlı bir haritada sakla
       const existingRecords = new Map();
       querySnapshot.docs.forEach(doc => {
-        const record = doc.data() as AttendanceRecord;
+        const data = doc.data();
+        // Normalize legacy status values on the fly
+        const record = { ...data, status: toCanonicalStatus(data.status) } as AttendanceRecord;
         // Tarih, kayıt çiftini sakla
         existingRecords.set(record.date, {
           docRef: doc.ref,
@@ -348,10 +364,10 @@ export const useDatabase = () => {
           const record = existingEntry.record;
           
           // Tatil günlerini atla - istenmedikçe
-          if (record.status !== 'Tatil / Ders Yok' || newStatus === 'Tatil / Ders Yok') {
+          if (record.status !== 'holiday' || canonicalNewStatus === 'holiday') {
             updatedCount++;
-            batch.update(existingEntry.docRef, { status: newStatus });
-            console.log(`Updating record for ${day.date} to status: ${newStatus}`);
+            batch.update(existingEntry.docRef, { status: canonicalNewStatus });
+            console.log(`Updating record for ${day.date} to status: ${canonicalNewStatus}`);
           } else {
             console.log(`Skipping holiday record for ${day.date}`);
           }
@@ -364,12 +380,12 @@ export const useDatabase = () => {
             courseName,
             date: day.date,
             weekNumber: day.weekNumber,
-            status: newStatus
+            status: canonicalNewStatus
           };
           
           const newDocRef = doc(recordsRef);
           batch.set(newDocRef, newRecord);
-          console.log(`Creating new record for ${day.date} with status: ${newStatus}`);
+          console.log(`Creating new record for ${day.date} with status: ${canonicalNewStatus}`);
         }
       }
         // Commit the batch
@@ -411,11 +427,11 @@ export const useDatabase = () => {
       // Get all records for this course
       const courseRecords = records.filter(r => r.courseName === name)
       
-      // Count absences (Gitmedim)
-      const absences = courseRecords.filter(r => r.status === 'Gitmedim').length
+      // Count absences (canonical key: 'absent')
+      const absences = courseRecords.filter(r => r.status === 'absent').length
       
-      // Count available weeks (excluding holidays marked as "Tatil / Ders Yok")
-      const holidays = courseRecords.filter(r => r.status === 'Tatil / Ders Yok').length
+      // Count available weeks (excluding holidays)
+      const holidays = courseRecords.filter(r => r.status === 'holiday').length
       const availableWeeks = Math.min(currentWeek, weekCount) - holidays
       
       // Calculate if course is at risk (3 or 4 absences)

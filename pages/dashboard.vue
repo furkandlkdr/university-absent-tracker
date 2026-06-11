@@ -1,6 +1,6 @@
 <template>
   <div class="py-6">
-    <h1 class="text-2xl font-bold mb-6">Dönemlerim</h1>
+    <h1 class="text-2xl font-bold mb-6">{{ t('dashboard.title') }}</h1>
 
     <!-- Loading state -->
     <div v-if="loading" class="flex justify-center items-center py-10">
@@ -20,7 +20,7 @@
                 clip-rule="evenodd" />
             </svg>
           </span>
-          Yeni Dönem Ekle
+          {{ t('dashboard.addNewTerm') }}
         </button>
       </div>
 
@@ -44,7 +44,7 @@
             <div>
               <h3 class="text-lg font-semibold">{{ term.name }}</h3>
               <p class="text-sm text-gray-600 dark:text-gray-400">
-                Başlangıç: {{ formatDate(term.startDate) }}
+                {{ t('dashboard.term.startDate') }}: {{ formatDate(term.startDate) }}
               </p>
             </div>
 
@@ -55,13 +55,13 @@
                 ? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
                 : 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300'
             ]">
-              {{ term.isReadOnly ? 'Tamamlandı' : 'Aktif' }}
+              {{ term.isReadOnly ? t('dashboard.term.completed') : t('dashboard.term.active') }}
             </span>
           </div>
 
           <!-- Term details -->
           <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            {{ getTotalCourses(term) }} ders
+            {{ tc('dashboard.term.courseCount', getTotalCourses(term)) }}
           </p>
 
           <!-- Actions -->
@@ -76,7 +76,7 @@
                     clip-rule="evenodd" />
                 </svg>
               </span>
-              Görüntüle
+              {{ t('common.view') }}
             </button>
 
             <button v-if="!term.isReadOnly" @click="editTerm(term)"
@@ -87,7 +87,7 @@
                     d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                 </svg>
               </span>
-              Düzenle
+              {{ t('dashboard.term.editButton') }}
             </button>
 
             <button @click="confirmDeleteTerm(term)"
@@ -119,23 +119,23 @@
         </button>
         
         <div class="p-5 border-b border-gray-200 dark:border-gray-700">
-          <h3 class="text-lg font-semibold">{{ showEditTermModal ? 'Dönemi Düzenle' : 'Yeni Dönem Ekle' }}</h3>
+          <h3 class="text-lg font-semibold">{{ showEditTermModal ? t('dashboard.form.editTitle') : t('dashboard.form.addTitle') }}</h3>
         </div>
 
         <div class="p-5">
           <form @submit.prevent="saveTerm" class="space-y-4">
             <div>
               <label for="termName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Dönem Adı <span class="text-red-500">*</span>
+                {{ t('dashboard.term.name') }} <span class="text-red-500">*</span>
               </label>
               <input id="termName" v-model="termForm.name" type="text" required
                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                placeholder="Örn: 2025 Bahar" />
+                :placeholder="t('dashboard.term.namePlaceholder')" />
             </div>
 
             <div>
               <label for="startDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Başlangıç Tarihi <span class="text-red-500">*</span>
+                {{ t('dashboard.term.startDate') }} <span class="text-red-500">*</span>
               </label>
               <input id="startDate" v-model="termForm.startDate" type="date" required
                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" />
@@ -143,7 +143,7 @@
 
             <div>
               <label for="weekCount" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Dönem Uzunluğu (Hafta) <span class="text-red-500">*</span>
+                {{ t('dashboard.term.weekCount') }} <span class="text-red-500">*</span>
               </label>
               <div class="flex items-stretch">
                 <button type="button" @click="decrementWeekCount" 
@@ -158,7 +158,7 @@
                     class="w-full px-3 py-2 border-y border-gray-300 dark:border-gray-700 text-center focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                     @blur="validateWeekCount" />
                   <div class="absolute inset-y-0 right-0 flex items-center px-3 text-xs text-gray-500 dark:text-gray-400">
-                    hafta
+                    {{ t('dashboard.term.week') }}
                   </div>
                 </div>
                 <button type="button" @click="incrementWeekCount"
@@ -170,12 +170,12 @@
                 </button>
               </div>
               <p class="mt-1 text-xs" :class="{ 'text-red-500 dark:text-red-400 font-medium animate-pulse': weekCountError, 'text-gray-500 dark:text-gray-400': !weekCountError }">
-                Dönem süresi 5 ile 18 hafta arasında olabilir (varsayılan: 14 hafta)
+                {{ t('dashboard.term.weekCountHint') }}
               </p>
             </div>
 
             <div>
-              <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Haftalık Ders Programı</h4>
+              <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ t('dashboard.schedule.title') }}</h4>
 
               <div class="space-y-6">
                 <div v-for="(day, dayIndex) in days" :key="dayIndex"
@@ -186,7 +186,7 @@
                     <!-- Morning Slots -->
                     <div>
                       <div class="flex justify-between items-center mb-1">
-                        <h6 class="text-xs text-gray-500 dark:text-gray-400">Öğleden Önce</h6>
+                        <h6 class="text-xs text-gray-500 dark:text-gray-400">{{ t('dashboard.schedule.morning') }}</h6>
                         <button 
                           type="button" 
                           @click="addMorningSlot(dayIndex)" 
@@ -195,7 +195,7 @@
                           <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                           </svg>
-                          ÖÖ Ders Slotu Ekle
+                          {{ t('dashboard.schedule.addMorningSlot') }}
                         </button>
                       </div>
                       <div class="grid grid-cols-1 gap-2">
@@ -203,7 +203,7 @@
                           <span class="text-xs w-10">{{ slotIndex + 1 }}.</span>
                           <input v-model="termForm.schedule[dayIndex].morningSlots[slotIndex]" type="text"
                             class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                            placeholder="Ders adı" />
+                            :placeholder="t('dashboard.schedule.coursePlaceholder')" />
                           <button 
                             type="button" 
                             @click="removeSlot(dayIndex, 'morning', slotIndex)" 
@@ -220,7 +220,7 @@
                     <!-- Afternoon Slots -->
                     <div>
                       <div class="flex justify-between items-center mb-1">
-                        <h6 class="text-xs text-gray-500 dark:text-gray-400">Öğleden Sonra</h6>
+                        <h6 class="text-xs text-gray-500 dark:text-gray-400">{{ t('dashboard.schedule.afternoon') }}</h6>
                         <button 
                           type="button" 
                           @click="addAfternoonSlot(dayIndex)" 
@@ -229,7 +229,7 @@
                           <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                           </svg>
-                          ÖS Ders Slotu Ekle
+                          {{ t('dashboard.schedule.addAfternoonSlot') }}
                         </button>
                       </div>
                       <div class="grid grid-cols-1 gap-2">
@@ -237,7 +237,7 @@
                           <span class="text-xs w-10">{{ slotIndex + 1 }}.</span>
                           <input v-model="termForm.schedule[dayIndex].afternoonSlots[slotIndex]" type="text"
                             class="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                            placeholder="Ders adı" />
+                            :placeholder="t('dashboard.schedule.coursePlaceholder')" />
                           <button 
                             type="button" 
                             @click="removeSlot(dayIndex, 'afternoon', slotIndex)" 
@@ -263,11 +263,11 @@
             <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
               <button type="button" @click="cancelTermModal"
                 class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700">
-                İptal
+                {{ t('common.cancel') }}
               </button>
               <button type="submit" :disabled="termFormLoading"
                 class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md disabled:opacity-50">
-                {{ termFormLoading ? 'Kaydediliyor...' : 'Kaydet' }}
+                {{ termFormLoading ? t('common.saving') : t('common.save') }}
               </button>
             </div>
           </form>
@@ -287,24 +287,20 @@
         </button>
         
         <div class="p-5 border-b border-gray-200 dark:border-gray-700">
-          <h3 class="text-lg font-semibold">Dönemi Sil</h3>
+          <h3 class="text-lg font-semibold">{{ t('dashboard.term.delete') }}</h3>
         </div>
 
         <div class="p-5">
-          <p class="mb-4 text-gray-700 dark:text-gray-300">
-            <strong>{{ termToDelete?.name }}</strong> dönemini silmek istediğinizden emin misiniz? Bu işlem geri
-            alınamaz ve
-            tüm devamsızlık kayıtları silinecektir.
-          </p>
+          <p class="mb-4 text-gray-700 dark:text-gray-300" v-html="t('dashboard.term.deleteConfirm', { name: termToDelete?.name })"></p>
 
           <div class="flex justify-end space-x-3">
             <button type="button" @click="showDeleteModal = false"
               class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700">
-              İptal
+              {{ t('common.cancel') }}
             </button>
             <button type="button" @click="deleteTerm" :disabled="deleteLoading"
               class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md disabled:opacity-50">
-              {{ deleteLoading ? 'Siliniyor...' : 'Evet, Sil' }}
+              {{ deleteLoading ? t('common.deleting') : t('dashboard.term.deleteConfirmYes') }}
             </button>
           </div>
         </div>
@@ -322,6 +318,7 @@ import OnboardingGuide from '~/components/OnboardingGuide.vue'
 import { computed } from 'vue'
 
 const { user, isLoggedIn, authInitialized } = useAuth()
+const { t, tc } = useI18n()
 const { getTerms, getTerm, addTerm, updateTerm, deleteTerm: deleteTermFunc, getAttendanceRecords } = useDatabase()
 const router = useRouter()
 const route = useRoute()
@@ -360,13 +357,13 @@ const termToDelete = ref<Term | null>(null)
 const deleteLoading = ref(false)
 
 // Days of the week
-const days = [
-  'Pazartesi',
-  'Salı',
-  'Çarşamba',
-  'Perşembe',
-  'Cuma'
-]
+const days = computed(() => [
+  t('dashboard.days.monday'),
+  t('dashboard.days.tuesday'),
+  t('dashboard.days.wednesday'),
+  t('dashboard.days.thursday'),
+  t('dashboard.days.friday'),
+])
 
 // Fetch terms and check for query parameters when component mounts
 onMounted(async () => {
@@ -559,7 +556,7 @@ const saveTerm = async () => {
   try {
     // Validate form
     if (!termForm.value.name || !termForm.value.startDate) {
-      termFormError.value = 'Lütfen dönem adı ve başlangıç tarihini girin.'
+      termFormError.value = t('dashboard.form.nameRequired')
       termFormLoading.value = false
       return
     }
@@ -607,14 +604,14 @@ const saveTerm = async () => {
     const uniqueCourseNames = new Set(courseNames)
 
     if (courseNames.length !== uniqueCourseNames.size) {
-      termFormError.value = 'Her ders adı benzersiz olmalıdır. Aynı ders adını birden fazla kez kullanmayın.'
+      termFormError.value = t('dashboard.form.uniqueCourseNames')
       termFormLoading.value = false
       return
     }
 
     // Check if there's at least one course
     if (schedule.length === 0) {
-      termFormError.value = 'En az bir ders eklemelisiniz.'
+      termFormError.value = t('dashboard.form.atLeastOneCourse')
       termFormLoading.value = false
       return
     }
@@ -725,10 +722,10 @@ const onboardingSteps = computed(() => {
   const step4Completed = step1Completed && attendanceCount.value > 0
 
   return [
-    { id: 1, title: 'Döneminizi Oluşturun', description: 'Dönem adı ve başlangıç tarihini girin.', completed: step1Completed, event: 'create-term', cta: 'Dönem Ekle' },
-    { id: 2, title: 'Hafta Yapısını Ayarlayın', description: 'Dönem uzunluğunu (hafta) belirleyin.', completed: step2Completed, event: 'create-term', cta: 'Yapılandır' },
-    { id: 3, title: 'Derslerinizi Ekleyin', description: 'Ders adlarını haftalık programa ekleyin.', completed: step3Completed, event: 'create-term', cta: 'Ders Ekle' },
-    { id: 4, title: 'İlk Devam Kaydınızı Girin', description: 'Bir ders için ilk "Gittim / Gitmedim" kaydını oluşturun.', completed: step4Completed, event: 'log-attendance', cta: null, hideCta: true }
+    { id: 1, title: t('onboarding.steps.createTerm.title'), description: t('onboarding.steps.createTerm.description'), completed: step1Completed, event: 'create-term', cta: t('onboarding.steps.createTerm.cta') },
+    { id: 2, title: t('onboarding.steps.configureWeeks.title'), description: t('onboarding.steps.configureWeeks.description'), completed: step2Completed, event: 'create-term', cta: t('onboarding.steps.configureWeeks.cta') },
+    { id: 3, title: t('onboarding.steps.addCourses.title'), description: t('onboarding.steps.addCourses.description'), completed: step3Completed, event: 'create-term', cta: t('onboarding.steps.addCourses.cta') },
+    { id: 4, title: t('onboarding.steps.logAttendance.title'), description: t('onboarding.steps.logAttendance.description'), completed: step4Completed, event: 'log-attendance', cta: null, hideCta: true }
   ]
 })
 

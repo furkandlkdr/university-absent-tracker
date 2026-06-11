@@ -1,0 +1,224 @@
+{
+  "common": {
+    "loading": "Yükleniyor...",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "saving": "Kaydediliyor...",
+    "delete": "Sil",
+    "deleting": "Siliniyor...",
+    "edit": "Düzenle",
+    "view": "Görüntüle",
+    "close": "Kapat",
+    "back": "Geri",
+    "dismiss": "Kapat",
+    "language": "Dil",
+    "changeLanguage": "Dil değiştir",
+    "english": "English",
+    "turkish": "Türkçe"
+  },
+  "nav": {
+    "myTerms": "Dönemlerim",
+    "login": "Giriş Yap",
+    "register": "Kayıt Ol",
+    "logout": "Çıkış Yap",
+    "themeSelector": "Tema seçici"
+  },
+  "footer": {
+    "madeWith": "Made with ❤️ by",
+    "copyright": "© {year} UnivTrack"
+  },
+  "home": {
+    "title": "UnivTrack | Devamsızlık Takip Uygulaması",
+    "subtitle": "Öğrenciler için ders devamsızlıklarını kolayca takip etmek için tasarlanmış mobil öncelikli bir web uygulaması.",
+    "featuresTitle": "Uygulama Özellikleri",
+    "features": {
+      "createSchedule": "Kolay dönem ve ders programı oluşturma",
+      "customLength": "Özelleştirilebilir dönem uzunluğu (5-18 hafta)",
+      "mobileTracking": "Devamsızlıklarınızı mobil uyumlu arayüz ile takip edin",
+      "limitWarnings": "Otomatik devamsızlık limiti uyarıları (%70)",
+      "personalization": "Kişiselleştirilebilir tema renkleri ve mod seçimi"
+    },
+    "getStartedTitle": "Hemen Başlayın",
+    "getStartedDescription": "Derslerinizin devamsızlık takibini kolaylaştırmak için hemen üye olun ve uygulamayı kullanmaya başlayın.",
+    "signupNow": "Hemen Üye Ol",
+    "haveAccount": "Hesabınız yok mu?",
+    "loginHere": "Giriş yapın",
+    "noAccount": "Hesabınız yok mu?",
+    "registerHere": "Kaydolun"
+  },
+  "login": {
+    "title": "Giriş Yap",
+    "email": "E-posta",
+    "emailPlaceholder": "adiniz@ornek.com",
+    "password": "Şifre",
+    "passwordPlaceholder": "********",
+    "forgotPassword": "Şifremi unuttum",
+    "submitting": "Giriş yapılıyor...",
+    "submit": "Giriş Yap",
+    "error": "Giriş başarısız. Lütfen e-posta ve şifrenizi kontrol edin.",
+    "genericError": "Giriş sırasında bir hata oluştu. Lütfen tekrar deneyin.",
+    "warningTitle": "Önemli Uyarı: Lütfen reklam engelleyicileri kapatın!",
+    "warningDescription": "Reklam engelleyiciler veri tabanı bağlantısını engelleyebilir."
+  },
+  "register": {
+    "title": "Hesap Oluştur",
+    "email": "E-posta",
+    "emailPlaceholder": "adiniz@ornek.com",
+    "password": "Şifre",
+    "passwordPlaceholder": "En az 6 karakter",
+    "confirmPassword": "Şifreyi Onayla",
+    "confirmPasswordPlaceholder": "Şifrenizi tekrar girin",
+    "submitting": "Kayıt yapılıyor...",
+    "submit": "Kayıt Ol",
+    "passwordMismatch": "Şifreler eşleşmiyor.",
+    "error": "Kayıt başarısız: {message}",
+    "genericError": "Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin.",
+    "warningTitle": "Önemli Uyarı: Lütfen reklam engelleyicileri kapatın!",
+    "warningDescription": "Reklam engelleyiciler veri tabanı bağlantısını engelleyebilir."
+  },
+  "forgotPassword": {
+    "title": "Şifre Sıfırlama",
+    "description": "Şifrenizi sıfırlamak için e-posta adresinizi girin. Size bir sıfırlama bağlantısı göndereceğiz.",
+    "email": "E-posta",
+    "emailPlaceholder": "adiniz@ornek.com",
+    "submitting": "Gönderiliyor...",
+    "submit": "Sıfırlama Bağlantısı Gönder",
+    "successMessage": "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi. Lütfen e-postanızı kontrol edin.",
+    "error": "Şifre sıfırlama başarısız: {message}",
+    "genericError": "Şifre sıfırlama sırasında bir hata oluştu. Lütfen tekrar deneyin.",
+    "backToLogin": "Giriş sayfasına dön"
+  },
+  "dashboard": {
+    "title": "Dönemlerim",
+    "addNewTerm": "Yeni Dönem Ekle",
+    "term": {
+      "name": "Dönem Adı",
+      "namePlaceholder": "Örn: 2025 Bahar",
+      "startDate": "Başlangıç Tarihi",
+      "weekCount": "Dönem Uzunluğu (Hafta)",
+      "weekCountHint": "Dönem süresi 5 ile 18 hafta arasında olabilir (varsayılan: 14 hafta)",
+      "week": "hafta",
+      "courseCount": "{count} ders",
+      "edit": "Dönemi Düzenle",
+      "editButton": "Düzenle",
+      "delete": "Dönemi Sil",
+      "deleteConfirm": "<strong>{name}</strong> dönemini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve tüm devamsızlık kayıtları silinecektir.",
+      "deleteConfirmYes": "Evet, Sil",
+      "completed": "Tamamlandı",
+      "active": "Aktif"
+    },
+    "schedule": {
+      "title": "Haftalık Ders Programı",
+      "morning": "Öğleden Önce",
+      "afternoon": "Öğleden Sonra",
+      "addMorningSlot": "ÖÖ Ders Slotu Ekle",
+      "addAfternoonSlot": "ÖS Ders Slotu Ekle",
+      "coursePlaceholder": "Ders adı"
+    },
+    "form": {
+      "editTitle": "Dönemi Düzenle",
+      "addTitle": "Yeni Dönem Ekle",
+      "nameRequired": "Lütfen dönem adı ve başlangıç tarihini girin.",
+      "uniqueCourseNames": "Her ders adı benzersiz olmalıdır. Aynı ders adını birden fazla kez kullanmayın.",
+      "atLeastOneCourse": "En az bir ders eklemelisiniz."
+    },
+    "days": {
+      "monday": "Pazartesi",
+      "tuesday": "Salı",
+      "wednesday": "Çarşamba",
+      "thursday": "Perşembe",
+      "friday": "Cuma"
+    }
+  },
+  "onboarding": {
+    "title": "Sıfırdan kurulum, 4 adım",
+    "subtitle": "İlk döneminizi hazırlayın, dersleri ekleyin ve ilk devam kaydını girin. Tam kontrol sizde.",
+    "steps": {
+      "createTerm": {
+        "title": "Döneminizi Oluşturun",
+        "description": "Dönem adı ve başlangıç tarihini girin.",
+        "cta": "Dönem Ekle"
+      },
+      "configureWeeks": {
+        "title": "Hafta Yapısını Ayarlayın",
+        "description": "Dönem uzunluğunu (hafta) belirleyin.",
+        "cta": "Yapılandır"
+      },
+      "addCourses": {
+        "title": "Derslerinizi Ekleyin",
+        "description": "Ders adlarını haftalık programa ekleyin.",
+        "cta": "Ders Ekle"
+      },
+      "logAttendance": {
+        "title": "İlk Devam Kaydınızı Girin",
+        "description": "Bir ders için ilk \"Gittim / Gitmedim\" kaydını oluşturun."
+      }
+    },
+    "completed": "Tamamlandı",
+    "start": "Başla"
+  },
+  "term": {
+    "notFound": "Dönem bulunamadı veya erişim izniniz yok.",
+    "backToTerms": "Dönemlerim'e Dön",
+    "editTerm": "Dönemi Düzenle",
+    "bulkUpdate": {
+      "title": "Toplu Güncelleme",
+      "description": "<strong>{course}</strong> dersinin ilk <strong>{week}</strong> haftasına ait devam durumlarını (tatiller hariç) '<strong>{status}</strong>' olarak güncellemek istediğinize emin misiniz?",
+      "info": "Henüz işaretlenmemiş haftalar için otomatik olarak yeni kayıtlar oluşturulacaktır.",
+      "updating": "Güncelleniyor...",
+      "update": "Güncelle"
+    },
+    "legend": {
+      "title": "Devamsızlık Durumu",
+      "attended": "Gittim",
+      "absent": "Gitmedim",
+      "holiday": "Tatil / Ders Yok",
+      "unmarked": "İşaretlenmedi",
+      "notStarted": "Ders henüz başlamamış"
+    },
+    "bulkUpdateHint": "<strong>Toplu Devamsızlık Güncelleme!</strong> Bir duruma (Gittim/Gitmedim/Tatil) <strong>uzun basarak</strong>, ilgili dersin önceki haftalarını topluca güncelleyebilirsiniz. İşaretlenmemiş haftalar için otomatik olarak yeni kayıtlar oluşturulur, var olan kayıtlar ise güncellenir (tatiller korunur).",
+    "week": "Hafta",
+    "weekLabel": "{num}. Hafta - {range}",
+    "futureDate": "Gelecek Tarihi",
+    "noClassesThisWeek": "Bu haftada ders bulunmamaktadır.",
+    "summaryTitle": "Devamsızlık Özeti",
+    "courseName": "Ders Adı",
+    "attendanceStatus": "Devamsızlık Durumu",
+    "warningMessage": "<strong>Uyarı:</strong> Kırmızı renkli dersler devamsızlık limitine yaklaşıyor veya aşmış durumda.",
+    "status": {
+      "attended": "Gittim",
+      "absent": "Gitmedim",
+      "holiday": "Tatil / Ders Yok"
+    },
+    "timeSlot": {
+      "morning1": "Öğleden Önce - 1. Slot",
+      "morning2": "Öğleden Önce - 2. Slot",
+      "morningExtra1": "Öğleden Önce - 3. Slot",
+      "morningExtra2": "Öğleden Önce - 4. Slot",
+      "morningExtra3": "Öğleden Önce - 5. Slot",
+      "afternoon1": "Öğleden Sonra - 1. Slot",
+      "afternoon2": "Öğleden Sonra - 2. Slot",
+      "afternoonExtra1": "Öğleden Sonra - 3. Slot",
+      "afternoonExtra2": "Öğleden Sonra - 4. Slot",
+      "afternoonExtra3": "Öğleden Sonra - 5. Slot"
+    }
+  },
+  "language": {
+    "switcher": {
+      "selectLanguage": "Dil seçin",
+      "english": "English",
+      "turkish": "Türkçe",
+      "currentLanguage": "Mevcut dil"
+    }
+  },
+  "theme": {
+    "title": "Tema Rengi",
+    "colorMode": "Renk Modu",
+    "light": "Açık",
+    "dark": "Koyu",
+    "system": "Sistem"
+  },
+  "errors": {
+    "generic": "Bir şeyler yanlış gitti. Lütfen tekrar deneyin."
+  }
+}

@@ -5,7 +5,7 @@
       <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
         <div class="flex flex-col items-center justify-center space-y-4">
           <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-          <p class="text-lg text-gray-600 dark:text-gray-400">Yükleniyor...</p>
+          <p class="text-lg text-gray-600 dark:text-gray-400">{{ t('common.loading') }}</p>
         </div>
       </div>
     </div>
@@ -14,17 +14,16 @@
     <div v-else class="w-full max-w-4xl">
       <div class="text-center mb-10">
         <h1 class="text-3xl md:text-4xl font-bold text-primary-600 dark:text-primary-400 mb-4">
-          UnivTrack | Devamsızlık Takip Uygulaması
+          {{ t('home.title') }}
         </h1>
         <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Öğrenciler için ders devamsızlıklarını kolayca takip etmek için tasarlanmış mobil öncelikli bir web
-          uygulaması.
+          {{ t('home.subtitle') }}
         </p>
       </div>
 
       <div class="grid md:grid-cols-2 gap-8">
         <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-lg shadow-md">
-          <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Uygulama Özellikleri</h2>
+          <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">{{ t('home.featuresTitle') }}</h2>
           <ul class="space-y-2">
             <li class="flex items-start">
               <div class="mr-2 mt-1 text-primary-500">
@@ -34,7 +33,7 @@
                     clip-rule="evenodd" />
                 </svg>
               </div>
-              <span>Kolay dönem ve ders programı oluşturma</span>
+              <span>{{ t('home.features.createSchedule') }}</span>
             </li>
             <li class="flex items-start">
               <div class="mr-2 mt-1 text-primary-500">
@@ -44,7 +43,7 @@
                     clip-rule="evenodd" />
                 </svg>
               </div>
-              <span>Özelleştirilebilir dönem uzunluğu (5-18 hafta)</span>
+              <span>{{ t('home.features.customLength') }}</span>
             </li>
             <li class="flex items-start">
               <div class="mr-2 mt-1 text-primary-500">
@@ -54,7 +53,7 @@
                     clip-rule="evenodd" />
                 </svg>
               </div>
-              <span>Devamsızlıklarınızı mobil uyumlu arayüz ile takip edin</span>
+              <span>{{ t('home.features.mobileTracking') }}</span>
             </li>
             <li class="flex items-start">
               <div class="mr-2 mt-1 text-primary-500">
@@ -64,7 +63,7 @@
                     clip-rule="evenodd" />
                 </svg>
               </div>
-              <span>Otomatik devamsızlık limiti uyarıları</span>
+              <span>{{ t('home.features.limitWarnings') }}</span>
             </li>
             <li class="flex items-start">
               <div class="mr-2 mt-1 text-primary-500">
@@ -74,24 +73,24 @@
                     clip-rule="evenodd" />
                 </svg>
               </div>
-              <span>Kişiselleştirilebilir tema renkleri ve mod seçimi</span>
+              <span>{{ t('home.features.personalization') }}</span>
             </li>
           </ul>
         </div>
 
         <div class="bg-surface-light dark:bg-surface-dark p-6 rounded-lg shadow-md flex flex-col justify-between">
-          <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Hemen Başlayın</h2>
+          <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">{{ t('home.getStartedTitle') }}</h2>
           <p class="text-gray-600 dark:text-gray-400 mb-6">
-            Derslerinizin devamsızlık takibini kolaylaştırmak için hemen üye olun ve uygulamayı kullanmaya başlayın.
+            {{ t('home.getStartedDescription') }}
           </p>
           <div class="flex flex-col space-y-3">
             <NuxtLink to="/register"
               class="bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-md text-center">
-              Hemen Üye Ol
+              {{ t('home.signupNow') }}
             </NuxtLink>
             <NuxtLink to="/login"
               class="border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 py-2 px-4 rounded-md text-center">
-              Giriş Yap
+              {{ t('nav.login') }}
             </NuxtLink>
           </div>
         </div>
@@ -102,6 +101,7 @@
 
 <script setup lang="ts">
 const { isLoggedIn, authInitialized } = useAuth()
+const { t } = useI18n()
 const router = useRouter()
 
 // Wait for auth to initialize, then redirect if user is logged in
